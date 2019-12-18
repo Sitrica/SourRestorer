@@ -66,7 +66,7 @@ public class SourRestorer extends SourPlugin {
 		commandHandler = new CommandHandler(this, SourRestorerCommand.class, packageName + ".commands");
 		getCommand("sourrestorer").setExecutor(commandHandler);
 		DefaultPlaceholders.register(this);
-		consoleMessage(getPrefix() + "has been enabled!");
+		consoleMessage("has been enabled!");
 	}
 
 	public <T extends ExternalManager> T getExternalManager(Class<T> expected) {

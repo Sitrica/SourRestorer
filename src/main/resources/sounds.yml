@@ -33,3 +33,13 @@ click:
             volume: 0.7
             pitch: 2
             delay: 0
+
+# Called when clearing the damage cause sorting.
+damage-cause-clear:
+    enabled: true
+    sounds:
+        1:
+            sound: "BLOCK_FIRE_EXTINGUISH"
+            volume: 0.7
+            pitch: 5
+            delay: 0

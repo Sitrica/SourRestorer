@@ -68,7 +68,7 @@ dependencies {
 	shade (group: 'com.h2database', name: 'h2', version: '1.4.199')
 
 	// Sitrica Core
-	shade (group: 'com.sitrica', name: 'core', version: '1.0.7e')
+	shade (group: 'com.sitrica', name: 'core', version: '1.0.8')
 
 }
 

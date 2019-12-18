@@ -15,6 +15,25 @@ close:
 inventories:
     view-inventory:
         title: "&4%date%"
+    damage-causes:
+        title: "&4Select Damage Cause"
+        border:
+            enabled: true
+            title: "&a"
+            material: "BLACK_STAINED_GLASS_PANE"
+            glowing: true
+        cause-icon:
+            title: "&c&l%cause%"
+            lore:
+                - "&7Click to sort the saved inventories"
+                - "&7by this damage cause."
+            material: "PAPER"
+        back:
+            title: "&cGo back"
+            lore:
+                - "&7Click to go back to"
+                - "&7the saved inventories."
+            material: "CHEST"
     save-inventory:
         title: "&4Inventories of %player%"
         border:
@@ -32,11 +51,19 @@ inventories:
                 - "&cDeath cause: &l%cause%"
             material: "CHEST"
         damage-cause:
-            title: "&cClick to sort by damage cause."
+            title: "&cSort by damage cause."
             lore:
                 - "&7Click to open a menu of damage"
                 - "&7causes to select from."
             material: "DIAMOND_SWORD"
+            additional-lore:
+                - ""
+                - "&eYou are currently sorting by"
+                - "&c&l%cause% &edamage cause."
+                - ""
+                - "&cRight-click to clear this sorting."
+            itemflags:
+                - "HIDE_ATTRIBUTES"
         sort:
             date:
                 title: "&6Click to sort by category."
