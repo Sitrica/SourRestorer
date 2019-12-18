@@ -1,0 +1,115 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+apply plugin: 'maven-publish'
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
+jar.archiveName = project.name + '.jar'
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+repositories {
+	mavenCentral()
+
+	// Spigot
+	maven {
+		url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+	}
+
+	// Bungeecord
+	maven {
+		url "https://oss.sonatype.org/content/repositories/snapshots/"
+	}
+
+	// HolographicDisplays
+	maven {
+		url 'https://ci.filoghost.me/plugin/repository/everything/'
+	}
+
+	// Citizens
+	maven {
+		url "http://repo.citizensnpcs.co/"
+	}
+
+	//Jitpack
+	maven {
+		url 'https://jitpack.io'
+	}
+
+	// AnvilGUI
+	maven {
+		url "https://nexus.wesjd.net/repository/thirdparty/"
+	}
+
+	maven {
+		url 'https://maven.pkg.github.com/Sitrica/SourCore/'
+		credentials {
+            username = "Sitrica"
+            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_PACKAGES_KEY")
+        }
+	}
+
+}
+
+dependencies {
+
+	// Spigot
+	implementation (group: 'org.spigotmc', name: 'spigot-api', version: '1.14.4-R0.1-SNAPSHOT')
+
+	// AnvilGUI
+	shade (group: 'net.wesjd', name: 'anvilgui', version: '1.2.1-SNAPSHOT')
+
+	// Smart-Invs
+	shade (group: 'fr.minuskube.inv', name: 'smart-invs', version: '1.2.7')
+
+	// H2 Database
+	shade (group: 'com.h2database', name: 'h2', version: '1.4.199')
+
+	// Sitrica Core
+	shade (group: 'com.sitrica', name: 'core', version: '1.0.7e')
+
+}
+
+configurations {
+	runtime.exclude group: 'org.bstats', module: 'bstats-bukkit-lite'
+}
+
+publishing {
+	repositories {
+		maven {
+			name = project.name
+			url = uri("https://maven.pkg.github.com/Sitrica/" + project.name)
+			credentials {
+				username = 'Sitrica'
+				password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_PACKAGES_KEY")
+			}
+		}
+	}
+	publications {
+		gpr(MavenPublication) {
+			version = project.property("version")
+			groupId = 'com.sitrica'
+			artifactId = project.name
+			from(components.java)
+		}
+	}
+}
+
+processResources {
+	from (sourceSets.main.resources.srcDirs) {
+		filter ReplaceTokens, tokens: ["version": project.property("version")]
+		include '**/*.yml'
+	}
+}
+
+jar {
+	configurations.shade.each { dep ->
+		from (project.zipTree(dep)) {
+			exclude '**/*.php'
+			exclude '**/*.yml'
+			exclude 'META-INF', 'META-INF/**'
+		}
+	}
+}

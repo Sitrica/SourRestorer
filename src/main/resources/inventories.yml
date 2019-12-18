@@ -1,0 +1,61 @@
+# The version is to help determine which version this config is. Please don't modify this value.
+version: "@version@"
+
+next:
+    title: "&a&lNext page"
+    material: "ARROW"
+previous:
+    title: "&c&lPrevious page"
+    material: "ARROW"
+close:
+    title: "&e&lClose menu"
+    material: "OAK_DOOR"
+
+# All configurations relating to inventories.
+inventories:
+    view-inventory:
+        title: "&4%date%"
+    save-inventory:
+        title: "&4Inventories of %player%"
+        border:
+            enabled: true
+            title: "&a"
+            material: "BLACK_STAINED_GLASS_PANE"
+            glowing: true
+        inventory-icon:
+            title: "&a%timestamp%"
+            lore:
+                - "&7Click to see this inventory."
+                - "&eLocation: %location%"
+                - "&bDistance from you: %distance%"
+                - "&fTimestamp: %timestamp%"
+                - "&cDeath cause: &l%cause%"
+            material: "CHEST"
+        damage-cause:
+            title: "&cClick to sort by damage cause."
+            lore:
+                - "&7Click to open a menu of damage"
+                - "&7causes to select from."
+            material: "DIAMOND_SWORD"
+        sort:
+            date:
+                title: "&6Click to sort by category."
+                lore:
+                    - "&a> &f&lDATE &a< &8&oSelected"
+                    - "&eLOCATION"
+                    - "&cSIZE"
+                material: "CLOCK"
+            location:
+                title: "&6Click to sort by category."
+                lore:
+                    - "&fDATE"
+                    - "&a> &e&lLOCATION &a< &8&oSelected"
+                    - "&cSIZE"
+                material: "MAP"
+            size:
+                title: "&6Click to sort by category."
+                lore:
+                    - "&fDATE"
+                    - "&eLOCATION"
+                    - "&a> &c&lSIZE &a< &8&oSelected"
+                material: "ENDER_CHEST"

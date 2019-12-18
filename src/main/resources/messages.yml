@@ -1,0 +1,37 @@
+# The version is to help determine which version this config is. Please don't modify this value.
+version: "@version@"
+
+# Information: Placeholders that are available for each message will be commented above it.
+# Default placeholders that exist on every message are %prefix% and %newline%/%nl%
+# Placeholders that if their object is found at the time of the message will be present: %player%, %sender% and %string% - sender being the user the message is sending too.
+
+# All command and general messages.
+messages:
+    # The main prefix for all chat messages.
+    prefix: "&7[&aSourRestorer&7] &r"
+    must-be-player: "&cYou must be a player to use this command."
+    # When a player has no permissions to perform an action.
+    no-permission: "&cYou do not have permission to do that."
+    command-doesnt-exist: "&7The command you entered does not exist or is spelt incorrectly."
+    # Called when a command is entered incorrectly.
+    # This and invalid-command-correction are called at same time.
+    invalid-command: "&cInvalid Command!"
+    invalid-command-correction: "&7The valid syntax is: &c%command%&7."
+    not-player: "Not Present"
+    not-same-world: "&cNot same world."
+    version: "&a%version% &7<> = required [] = optional"
+
+# All messages relating to commands.
+commands:
+    sourrestorer:
+        description: "Display the main page."
+        syntax: "/sourrestorer"
+    admin:
+        description: "View admin commands."
+        syntax: "&c/sourrestorer admin"
+    restore:
+        description: "Restore or view player inventories."
+        syntax: "&c/sr view <player>"
+        no-player-found: "&cPlayer by the name &l%input%&c is not a valid player."
+        never-played: "&cPlayer &l%input%&c has never played on this server."
+        no-saves: "&cPlayer &l%input%&c has no inventory saves."

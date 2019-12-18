@@ -1,0 +1,17 @@
+name: SourRestorer
+description: The best inventory saver and restorer plugin.
+authors: [LimeGlass, Sitrica]
+main: com.sitrica.restorer.SourRestorer
+version: @version@
+api-version: 1.13
+softdepend: [PlaceholderAPI]
+commands:
+  sourrestorer:
+    description: View information on the SourRestorer plugin.
+    default: true
+    aliases: [sr, sourr, invrestore, sourrestorer]
+    usage: /sourrestorer
+permissions:
+  sourrestorer.*:
+    description: Gives access to all SourRestorer commands.
+  

@@ -1,0 +1,35 @@
+# The version is to help determine which version this config is. Please don't modify this value.
+version: "@version@"
+
+# Pitches range from 0-15, any number after just recycles back to 0. (Minecraft 16 decimal pitches)
+# Volumes range from 0-1 (The single decimal place is what is considered), this may change in future versions of Spigot so play with this.
+
+# Error sound effect
+error:
+    enabled: true
+    sounds:
+        1:
+            sound: "ENTITY_VILLAGER_NO"
+            volume: 1
+            pitch: 2
+            delay: 0
+
+# When a player's inventory gets restored.
+restore:
+    enabled: true
+    sounds:
+        1:
+            sound: "ENTITY_PLAYER_LEVELUP"
+            volume: 1
+            pitch: 0
+            delay: 0
+
+# Called when a button is to be simulated in clicking.
+click:
+    enabled: true
+    sounds:
+        1:
+            sound: "UI_BUTTON_CLICK"
+            volume: 0.7
+            pitch: 2
+            delay: 0
