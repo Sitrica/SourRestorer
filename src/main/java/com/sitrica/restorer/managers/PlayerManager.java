@@ -22,6 +22,7 @@ import com.sitrica.core.manager.Manager;
 import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
 import com.sitrica.restorer.objects.InventorySave;
+import com.sitrica.restorer.objects.OfflineSave;
 import com.sitrica.restorer.objects.RestorerPlayer;
 import com.sitrica.restorer.serializers.InventorySaveSerializer;
 import com.sitrica.restorer.serializers.RestorerPlayerSerializer;
@@ -70,18 +71,24 @@ public class PlayerManager extends Manager {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		RestorerPlayer player = getRestorerPlayer(event.getPlayer());
+		Player player = event.getPlayer();
+		RestorerPlayer restorerPlayer = getRestorerPlayer(event.getPlayer());
 		SourRestorer.getInstance().debugMessage("Loaded player " + player.getUniqueId());
-		InventorySave load = player.getOnlineLoad();
-		if (load != null)
-			player.restore(load);
+		InventorySave load = restorerPlayer.getOnlineLoad();
+		if (load != null) {
+			restorerPlayer.restore(load);
+			return;
+		}
+		OfflineSave offline = restorerPlayer.getOfflineSave();
+		offline.load(player);
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		RestorerPlayer gamePlayer = getRestorerPlayer(player);
-		database.put(player.getUniqueId() + "", gamePlayer);
+		RestorerPlayer restorerPlayer = getRestorerPlayer(player);
+		database.put(player.getUniqueId() + "", restorerPlayer);
+		restorerPlayer.setOfflineSave(new OfflineSave(player));
 		Bukkit.getScheduler().runTaskLaterAsynchronously(SourRestorer.getInstance(), () -> players.removeIf(p -> p.getUniqueId().equals(player.getUniqueId())), 1);
 	}
 

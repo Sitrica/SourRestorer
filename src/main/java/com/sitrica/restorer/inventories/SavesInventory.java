@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,9 +53,9 @@ public class SavesInventory implements InventoryProvider {
 		sort.sort(player, saves);
 		if (saves.size() <= 0)
 			return;
-		DamageCause cause = restorerPlayer.getDamageCause();
-		if (cause != null)
-			saves.removeIf(save -> save.getDamageCause() != cause);
+		String reason = restorerPlayer.getSortingReason();
+		if (reason != null)
+			saves.removeIf(save -> save.getReason().equalsIgnoreCase(reason));
 		Pagination pagination = contents.pagination();
 		ClickableItem[] items = saves.stream()
 				.map(save -> {
@@ -86,28 +85,22 @@ public class SavesInventory implements InventoryProvider {
 		pagination.setItemsPerPage(28);
 		pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 1).allowOverride(false));
 		contents.set(0, 5, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.damage-cause")
-				.withAdditionalLoresIf(restorerPlayer.getDamageCause() != null, new ListMessageBuilder(instance, false, "inventories.save-inventory.damage-cause.additional-lore")
-						.withPlaceholder(restorerPlayer.getDamageCause(), new Placeholder<DamageCause>("%cause%") {
-							@Override
-							public Object replace(DamageCause cause) {
-								if (cause == null)
-									return null;
-								return restorerPlayer.getDamageCause().name().toLowerCase(Locale.US);
-							}
-						})
+				.withAdditionalLoresIf(reason != null, new ListMessageBuilder(instance, false, "inventories.save-inventory.damage-cause.additional-lore")
 						.setPlaceholderObject(restorerPlayer)
 						.fromConfiguration(inventories)
+						.replace("%reason%", reason)
+						.replace("%cause%", reason)
 						.get())
-				.glowingIf(restorerPlayer.getDamageCause() != null)
+				.glowingIf(reason != null)
 				.setPlaceholderObject(restorerPlayer)
 				.build(), e -> {
-					if (e.isRightClick() && restorerPlayer.getDamageCause() != null) {
-						restorerPlayer.setDamageCausee(null);
+					if (e.isRightClick() && reason != null) {
+						restorerPlayer.setSortingReason(null);
 						new SoundPlayer(instance, "damage-cause-clear").playTo(player);
 						getInventory(player).open(player);
 						return;
 					}
-					new DamageCauseInventory(owner).open(player);
+					new ReasonsInventory(owner).open(player);
 					new SoundPlayer(instance, "click").playTo(player);
 				}));
 		contents.set(0, 3, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.sort." + sort.name().toLowerCase(Locale.US)).build(),

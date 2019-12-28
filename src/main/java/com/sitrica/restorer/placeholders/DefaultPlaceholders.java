@@ -28,10 +28,10 @@ public class DefaultPlaceholders {
 				return new SimpleDateFormat(pattern).format(date);
 			}
 		});
-		Placeholders.registerPlaceholder(new Placeholder<InventorySave>("%cause%", "%damagecause%") {
+		Placeholders.registerPlaceholder(new Placeholder<InventorySave>("%cause%", "%damagecause%", "%reason%") {
 			@Override
 			public String replace(InventorySave save) {
-				return save.getDamageCause().name().toLowerCase();
+				return save.getReason().toLowerCase();
 			}
 		});
 		Placeholders.registerPlaceholder(new Placeholder<InventorySave>("%location%") {

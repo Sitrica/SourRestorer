@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -21,24 +20,24 @@ public class InventorySave {
 	private final Map<UUID, Long> logs = new HashMap<>();
 	private final Location deathLocation;
 	private final ItemStack[] contents;
-	private final DamageCause cause;
 	private final long timestamp;
+	private final String reason;
 	private final UUID uuid;
 
-	public InventorySave(UUID uuid, DamageCause cause, Location deathLocation, ItemStack... contents) {
-		this(System.currentTimeMillis(), uuid, cause, deathLocation, contents);
+	public InventorySave(UUID uuid, String reason, Location deathLocation, ItemStack... contents) {
+		this(System.currentTimeMillis(), uuid, reason, deathLocation, contents);
 	}
 
-	public InventorySave(long timestamp, UUID uuid, DamageCause cause, Location deathLocation, ItemStack... contents) {
+	public InventorySave(long timestamp, UUID uuid, String reason, Location deathLocation, ItemStack... contents) {
 		this.deathLocation = deathLocation;
 		this.timestamp = timestamp;
 		this.contents = contents;
-		this.cause = cause;
+		this.reason = reason;
 		this.uuid = uuid;
 	}
 
-	public DamageCause getDamageCause() {
-		return cause;
+	public String getReason() {
+		return reason;
 	}
 
 	public UUID getOwnerUUID() {

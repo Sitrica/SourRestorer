@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.PlayerInventory;
 
 import com.google.common.collect.Lists;
@@ -18,11 +17,12 @@ import com.sitrica.restorer.managers.SaveManager.SortType;
 public class RestorerPlayer {
 
 	private final List<InventorySave> saves = new ArrayList<>();
-	// sort and cause are used in the inventories.
+	// sort and reason are used in the inventory sorting.
 	private SortType sort = SortType.DATE;
+	private OfflineSave offline;
 	private InventorySave save;
-	private DamageCause cause;
 	private final UUID uuid;
+	private String reason;
 
 	public RestorerPlayer(UUID uuid, Collection<InventorySave> saves) {
 		this.saves.addAll(saves);
@@ -45,12 +45,23 @@ public class RestorerPlayer {
 		this.sort = sort;
 	}
 
-	public DamageCause getDamageCause() {
-		return cause;
+	public OfflineSave getOfflineSave() {
+		return offline;
 	}
 
-	public void setDamageCausee(DamageCause cause) {
-		this.cause = cause;
+	public void setOfflineSave(OfflineSave offline) {
+		this.offline = offline;
+	}
+
+	/**
+	 * @return The String to compare against for the reasons of InventorySave's
+	 */
+	public String getSortingReason() {
+		return reason;
+	}
+
+	public void setSortingReason(String reason) {
+		this.reason = reason;
 	}
 
 	public Optional<Player> getPlayer() {

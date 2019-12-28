@@ -1,19 +1,17 @@
 package com.sitrica.restorer.inventories;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.collect.Ordering;
 import com.sitrica.core.items.ItemStackBuilder;
 import com.sitrica.core.messaging.MessageBuilder;
 import com.sitrica.core.sounds.SoundPlayer;
 import com.sitrica.restorer.SourRestorer;
 import com.sitrica.restorer.managers.PlayerManager;
+import com.sitrica.restorer.managers.SaveManager;
 import com.sitrica.restorer.objects.RestorerPlayer;
 
 import fr.minuskube.inv.ClickableItem;
@@ -23,14 +21,14 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 
-public class DamageCauseInventory implements InventoryProvider {
+public class ReasonsInventory implements InventoryProvider {
 
 	private final FileConfiguration inventories;
 	private final PlayerManager playerManager;
 	private final SourRestorer instance;
 	private final RestorerPlayer owner;
 
-	public DamageCauseInventory(RestorerPlayer owner) {
+	public ReasonsInventory(RestorerPlayer owner) {
 		this.instance = SourRestorer.getInstance();
 		playerManager = instance.getManager(PlayerManager.class);
 		inventories = instance.getConfiguration("inventories").get();
@@ -44,16 +42,16 @@ public class DamageCauseInventory implements InventoryProvider {
 				.setPlaceholderObject(restorerPlayer)
 				.build()));
 		Pagination pagination = contents.pagination();
-		ClickableItem[] items = Arrays.stream(DamageCause.values())
-				.sorted(Ordering.usingToString())
-				.map(cause -> {
+		ClickableItem[] items = instance.getManager(SaveManager.class).getReasons().stream()
+				.map(reason -> {
 					ItemStack itemstack = new ItemStackBuilder(instance, "inventories.damage-causes.cause-icon")
-							.replace("%cause%", cause.name().toLowerCase(Locale.US))
-							.glowingIf(restorerPlayer.getDamageCause() == cause)
+							.replace("%reason%", reason.toLowerCase(Locale.US))
+							.replace("%cause%", reason.toLowerCase(Locale.US))
+							.glowingIf(restorerPlayer.getSortingReason().equalsIgnoreCase(reason))
 							.setPlaceholderObject(restorerPlayer)
 							.build();
 					return ClickableItem.of(itemstack, event -> {
-							restorerPlayer.setDamageCausee(cause);
+							restorerPlayer.setSortingReason(reason);
 							new SavesInventory(owner).open(player);
 							new SoundPlayer(instance, "click").playTo(player);
 						});

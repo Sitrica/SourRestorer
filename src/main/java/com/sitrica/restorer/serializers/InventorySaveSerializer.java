@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.JsonArray;
@@ -19,6 +18,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.sitrica.core.database.Serializer;
+import com.sitrica.restorer.SourRestorer;
+import com.sitrica.restorer.managers.SaveManager;
 import com.sitrica.restorer.objects.InventorySave;
 
 public class InventorySaveSerializer implements Serializer<InventorySave> {
@@ -29,7 +30,7 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 		if (save == null)
 			return json;
 		json.add("location", context.serialize(save.getDeathLocation(), Location.class));
-		json.addProperty("cause", save.getDamageCause().name());
+		json.addProperty("reason", save.getReason());
 		json.addProperty("timestamp", save.getTimestamp());
 		json.addProperty("uuid", save.getOwnerUUID() + "");
 		JsonArray contents = new JsonArray();
@@ -63,15 +64,11 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 		if (timestampElement == null)
 			return null;
 		long timestamp = timestampElement.getAsLong();
-		JsonElement causeElement = object.get("cause");
-		if (causeElement == null)
+		JsonElement reasonElement = object.get("reason");
+		if (reasonElement == null)
 			return null;
-		DamageCause cause;
-		try {
-			cause = DamageCause.valueOf(causeElement.getAsString());
-		} catch (Exception e) {
-			return null;
-		}
+		String reason = reasonElement.getAsString();
+		SourRestorer.getInstance().getManager(SaveManager.class).addReason(reason);
 		JsonElement contentsElement = object.get("contents");
 		List<ItemStack> contents = new ArrayList<>();
 		if (contentsElement != null && !contentsElement.isJsonNull() && contentsElement.isJsonArray()) {
@@ -102,7 +99,7 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 				log.put(logUuid, logTimestamp);
 			});
 		}
-		InventorySave save = new InventorySave(timestamp, uuid, cause, location, contents.toArray(new ItemStack[contents.size()]));
+		InventorySave save = new InventorySave(timestamp, uuid, reason, location, contents.toArray(new ItemStack[contents.size()]));
 		save.addAllRestoreLog(log);
 		return save;
 	}

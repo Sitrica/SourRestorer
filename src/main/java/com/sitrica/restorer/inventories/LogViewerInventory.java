@@ -73,7 +73,7 @@ public class LogViewerInventory implements InventoryProvider {
 					}));
 		if (!pagination.isLast())
 			contents.set(5, 5, ClickableItem.of(new ItemStackBuilder(instance, "next").build(),
-					e -> { 
+					e -> {
 						getInventory(player).open(player, pagination.next().getPage());
 						new SoundPlayer(instance, "click").playTo(player);
 					}));

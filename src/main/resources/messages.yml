@@ -37,3 +37,9 @@ commands:
         no-player-found: "&cPlayer by the name &l%input%&c is not a valid player."
         never-played: "&cPlayer &l%input%&c has never played on this server."
         no-saves: "&cPlayer &l%input%&c has no inventory saves."
+    save:
+        description: "Save a player's inventory regardless if offline."
+        syntax: "&c/sr save <player>"
+        no-player-found: "&cPlayer by the name &l%input%&c is not a valid player."
+        never-played: "&cPlayer &l%input%&c has never played on this server."
+        saved: "&aYou have just saved &l%player%&a's inventory."
