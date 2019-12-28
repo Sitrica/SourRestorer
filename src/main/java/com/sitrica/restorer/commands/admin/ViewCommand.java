@@ -58,7 +58,7 @@ public class ViewCommand extends AdminCommand {
 					.send(player);
 			return ReturnType.FAILURE;
 		}
-		new SavesInventory().open(player);
+		new SavesInventory(restorerPlayer.get()).open(player);
 		return ReturnType.SUCCESS;
 	}
 

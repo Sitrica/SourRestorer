@@ -26,6 +26,7 @@ public class RestorerPlayerSerializer implements Serializer<RestorerPlayer> {
 		JsonArray saves = new JsonArray();
 		player.getInventorySaves().forEach(save -> saves.add(context.serialize(save, InventorySave.class)));
 		json.add("saves", saves);
+		json.add("save", context.serialize(player.getOnlineLoad(), InventorySave.class));
 		return json;
 	}
 
@@ -50,6 +51,12 @@ public class RestorerPlayerSerializer implements Serializer<RestorerPlayer> {
 			});
 		}
 		RestorerPlayer player = new RestorerPlayer(uuid, saves);
+		JsonElement saveElement = object.get("save");
+		if (saveElement != null) {
+			InventorySave save = context.deserialize(saveElement, InventorySave.class);
+			if (save != null)
+				player.setOnlineLoad(save);
+		}
 		return player;
 	}
 

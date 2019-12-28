@@ -34,11 +34,13 @@ public class SavesInventory implements InventoryProvider {
 	private final FileConfiguration inventories;
 	private final PlayerManager playerManager;
 	private final SourRestorer instance;
+	private final RestorerPlayer owner;
 
-	public SavesInventory() {
+	public SavesInventory(RestorerPlayer owner) {
 		this.instance = SourRestorer.getInstance();
 		playerManager = instance.getManager(PlayerManager.class);
 		inventories = instance.getConfiguration("inventories").get();
+		this.owner = owner;
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class SavesInventory implements InventoryProvider {
 		contents.fillBorders(ClickableItem.empty(new ItemStackBuilder(instance, "inventories.save-inventory.border")
 				.setPlaceholderObject(restorerPlayer)
 				.build()));
-		List<InventorySave> saves = restorerPlayer.getInventorySaves();
+		List<InventorySave> saves = owner.getInventorySaves();
 		SortType sort = restorerPlayer.getSortType();
 		sort.sort(player, saves);
 		if (saves.size() <= 0)
@@ -74,7 +76,6 @@ public class SavesInventory implements InventoryProvider {
 									.fromConfiguration(inventories)
 									.setPlaceholderObject(save)
 									.get());
-							inventory.clear();
 							inventory.setContents(save.getContents());
 							player.openInventory(inventory);
 							new SoundPlayer(instance, "click").playTo(player);
@@ -106,7 +107,7 @@ public class SavesInventory implements InventoryProvider {
 						getInventory(player).open(player);
 						return;
 					}
-					new DamageCauseInventory().open(player);
+					new DamageCauseInventory(owner).open(player);
 					new SoundPlayer(instance, "click").playTo(player);
 				}));
 		contents.set(0, 3, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.sort." + sort.name().toLowerCase(Locale.US)).build(),

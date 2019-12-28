@@ -13,8 +13,53 @@ close:
 
 # All configurations relating to inventories.
 inventories:
+    restore-selector:
+        title: "&4Restore selector"
+        back:
+            title: "&cGo back"
+            material: "REDSTONE"
+            lore:
+                - "&7Click to go back to the inventory."
+        instant:
+            title: "&aInstant"
+            material: "REDSTONE"
+            lore:
+                - "&7Click to restore this inventory right now."
+                - "&7If the player is offline, their inventory"
+                - "&7will be restored to this save on their"
+                - "&7next log in."
+    logs-inventory:
+        title: "&4Viewing logs of inventory."
+        border:
+            enabled: true
+            title: "&a"
+            material: "BLACK_STAINED_GLASS_PANE"
+            glowing: true
+        back:
+            title: "&cGo back"
+            material: "REDSTONE"
+            lore:
+                - "&7Click to go back to the inventory viewer."
+        player-icon:
+            title: "&e%player% restored at %date%"
+            material: "PLAYER_HEAD"
+            material-meta: "%player%"
+            lore:
+                - "&7The staff member %player% has restored"
+                - "&7this inventory on %date%."
     view-inventory:
         title: "&4%date%"
+        back:
+            title: "&cGo back"
+            material: "REDSTONE"
+            lore:
+                - "&7Click to go back to the inventory viewer."
+        restore-icon:
+            title: "&e&lRestore this inventory"
+            material: "CHEST"
+            lore:
+                - "&7Click to restore this inventory"
+                - "&7to the player %player%."
     damage-causes:
         title: "&4Select Damage Cause"
         border:
@@ -49,6 +94,12 @@ inventories:
                 - "&bDistance from you: %distance%"
                 - "&fTimestamp: %timestamp%"
                 - "&cDeath cause: &l%cause%"
+            material: "CHEST"
+        restore-history:
+            title: "&eRestore history"
+            lore:
+                - "&7Click to see all the inventories"
+                - "&7that admins have restored to this player."
             material: "CHEST"
         damage-cause:
             title: "&cSort by damage cause."

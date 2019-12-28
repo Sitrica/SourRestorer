@@ -7,8 +7,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.google.common.collect.Lists;
 import com.sitrica.restorer.managers.SaveManager.SortType;
@@ -18,6 +20,7 @@ public class RestorerPlayer {
 	private final List<InventorySave> saves = new ArrayList<>();
 	// sort and cause are used in the inventories.
 	private SortType sort = SortType.DATE;
+	private InventorySave save;
 	private DamageCause cause;
 	private final UUID uuid;
 
@@ -54,6 +57,10 @@ public class RestorerPlayer {
 		return Optional.ofNullable(Bukkit.getPlayer(uuid));
 	}
 
+	public OfflinePlayer getOfflinePlayer() {
+		return Bukkit.getOfflinePlayer(uuid);
+	}
+
 	public boolean isOnline() {
 		return getPlayer().isPresent();
 	}
@@ -64,6 +71,32 @@ public class RestorerPlayer {
 
 	public List<InventorySave> getInventorySaves() {
 		return Lists.newArrayList(saves);
+	}
+
+	/**
+	 * This is the inventory that will be loaded when the player joins the server.
+	 * Used when an admin commands it to be restored on their next login.
+	 * 
+	 * @return The InventorySave to load on their next login.
+	 */
+	public InventorySave getOnlineLoad() {
+		return save;
+	}
+
+	public void setOnlineLoad(InventorySave save) {
+		this.save = save;
+	}
+
+	public void restore(InventorySave save) {
+		if (isOnline()) {
+			//TODO handle helmets and armour properly.
+			PlayerInventory inventory = getPlayer().get().getInventory();
+			inventory.clear();
+			inventory.setContents(save.getContents());
+			save = null;
+			return;
+		}
+		this.save = save;
 	}
 
 	@Override

@@ -20,6 +20,8 @@ messages:
     not-player: "Not Present"
     not-same-world: "&cNot same world."
     version: "&a%version% &7<> = required [] = optional"
+    player-not-online: "&cThe player %player% is not online anymore."
+    player-not-present: "&cThe player &l%player% &chas never logged on to this server before."
 
 # All messages relating to commands.
 commands:

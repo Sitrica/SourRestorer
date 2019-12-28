@@ -3,7 +3,9 @@ package com.sitrica.restorer.serializers;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -33,6 +35,14 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 		JsonArray contents = new JsonArray();
 		Arrays.stream(save.getContents()).forEach(itemstack -> contents.add(context.serialize(itemstack, ItemStack.class)));
 		json.add("contents", contents);
+		JsonArray log = new JsonArray();
+		save.getRestoreLog().entrySet().forEach(entry -> {
+			JsonObject logJson = new JsonObject();
+			logJson.addProperty("uuid", entry.getKey() + "");
+			logJson.addProperty("timestamp", entry.getValue());
+			log.add(logJson);
+		});
+		json.add("log", log);
 		return json;
 	}
 
@@ -73,7 +83,28 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 				contents.add(itemstack);
 			});
 		}
-		return new InventorySave(timestamp, uuid, cause, location, contents.toArray(new ItemStack[contents.size()]));
+		JsonElement logElement = object.get("log");
+		Map<UUID, Long> log = new HashMap<>();
+		if (logElement != null && !logElement.isJsonNull() && logElement.isJsonArray()) {
+			JsonArray array = logElement.getAsJsonArray();
+			array.forEach(element -> {
+				JsonObject logObject = element.getAsJsonObject();
+				String logStringUUID = logObject.get("uuid").getAsString();
+				if (logStringUUID == null)
+					return;
+				UUID logUuid = UUID.fromString(logStringUUID);
+				if (logUuid == null)
+					return;
+				JsonElement logTimestampElement = object.get("timestamp");
+				if (logTimestampElement == null)
+					return;
+				long logTimestamp = logTimestampElement.getAsLong();
+				log.put(logUuid, logTimestamp);
+			});
+		}
+		InventorySave save = new InventorySave(timestamp, uuid, cause, location, contents.toArray(new ItemStack[contents.size()]));
+		save.addAllRestoreLog(log);
+		return save;
 	}
 
 }

@@ -21,7 +21,7 @@ public class SaveManager extends Manager {
 
 	public static enum SortType {
 
-		DATE(Comparator.comparingLong(InventorySave::getTimestamp)),
+		DATE(true, Comparator.comparingLong(InventorySave::getTimestamp)),
 		LOCATION(null) {
 			@Override
 			public void sort(Player player, List<InventorySave> list) {
@@ -44,13 +44,22 @@ public class SaveManager extends Manager {
 		});
 
 		private final Comparator<? super InventorySave> comparator;
+		private final boolean reverse;
 
 		SortType(Comparator<? super InventorySave> comparator) {
 			this.comparator = comparator;
+			this.reverse = false;
+		}
+
+		SortType(boolean reverse, Comparator<? super InventorySave> comparator) {
+			this.comparator = comparator;
+			this.reverse = reverse;
 		}
 
 		public void sort(Player player, List<InventorySave> list) {
 			Collections.sort(list, comparator);
+			if (reverse)
+				Collections.reverse(list);
 		}
 
 	}

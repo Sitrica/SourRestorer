@@ -1,5 +1,8 @@
 package com.sitrica.restorer.objects;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +17,8 @@ import com.sitrica.restorer.managers.PlayerManager;
 
 public class InventorySave {
 
+	// This map, maps out the times that a player has restored this inventory.
+	private final Map<UUID, Long> logs = new HashMap<>();
 	private final Location deathLocation;
 	private final ItemStack[] contents;
 	private final DamageCause cause;
@@ -50,6 +55,18 @@ public class InventorySave {
 
 	public ItemStack[] getContents() {
 		return contents;
+	}
+
+	public void addRestoreLog(UUID uuid) {
+		logs.put(uuid, System.currentTimeMillis());
+	}
+
+	public void addAllRestoreLog(Map<UUID, Long> map) {
+		logs.putAll(map);
+	}
+
+	public Map<UUID, Long> getRestoreLog() {
+		return Collections.unmodifiableMap(logs);
 	}
 
 	public long getTimestamp() {

@@ -72,6 +72,9 @@ public class PlayerManager extends Manager {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		RestorerPlayer player = getRestorerPlayer(event.getPlayer());
 		SourRestorer.getInstance().debugMessage("Loaded player " + player.getUniqueId());
+		InventorySave load = player.getOnlineLoad();
+		if (load != null)
+			player.restore(load);
 	}
 
 	@EventHandler
