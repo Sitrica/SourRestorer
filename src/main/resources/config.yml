@@ -7,6 +7,8 @@ debug: false
 general:
     # The max amount of new lines a user is allowed to enter in inputtable placeholders.
     new-lines: 4
+    # How the date placeholder should be displayed.
+    # Lookup java data formater letters to figure out what each one does.
     date-format: "MM/dd/yyyy HH:mm:ss"
 
 database:
@@ -20,3 +22,61 @@ database:
         address: "localhost"
         password: "password"
         name: "example"
+
+# Disables the confirmation menu that pops up on every inventory save deletion.
+disable-confirmation-delete: false
+
+# Manage automated deletion algorithms.
+delete-system:
+    # Auto delete a save if it passes set time condition.
+    time:
+        enabled: false
+        # The time string to match against.
+        # months, weeks, minutes, ticks etc, all accepted.
+        # Multiple accepted too: 5 days and 2 weeks
+        after: "30 days"
+        # Only delete the data when loaded (player joining or staff lookup). Keeping disabled reduces an async
+        # task from running, but can also generate a bigger database.
+        only-when-loaded: false
+        # The time between time checks on all inventory saves done async.
+        # This is for the task that runs when "only-when-loaded" is set to true.
+        task-cycle: "12 hours"
+    # If max-limit is enabled, all old inventories that pass the limit
+    # will be deleted, oldest first in order.
+    max-limit:
+        enabled: false
+        limit: 1000
+    # Delete all the player's inventory saves when the player joins the server.
+    login: false
+    # Delete all the player's inventory saves when the player leaves the server.
+    logout: false
+    # Delete inventory saves if they have been restored, or only
+    # after they have been restored X amount of times.
+    restored:
+        enabled: false
+        amount: 1
+    # If the user is banned, all their saves will be deleted to clear up database.
+    # This is assuming the banning plugin uses Spigot's proper API
+    # Make a suggestion ticket on this plugin's Github, if you would like us to support your ban manager.
+    banned:
+        enabled: false
+        # The time between checks on all inventory saves done async.
+        # An async task is required to check all bans on all inventory saves.
+        task-cycle: "1 day"
+    # If stared inventory saves should be deleted.
+    # If false stared saves will never be deleted automatically.
+    # Stared inventories are special tags that staff can put on inventories by middle clicking.
+    delete-stared: false
+    # Only apply algorithms to certain defined reasons.
+    # So if a reason is in this list below, it won't be deleted. (can be a whitelist too)
+    # List of reasons are all damage causes and any custom ones registered to plugin.
+    # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
+    reasons:
+        enabled: false
+        # If true, this list becomes a whitelist rather than a blacklist.
+        # When whitelist; only inventory saves with the reasons in the list can be deleted.
+        whitelist: false
+        list: #example list
+            - "VOID"
+            - "MAGIC"
+            - "MANUAL" # Manual is when a staff member manually saves a player's inventory.

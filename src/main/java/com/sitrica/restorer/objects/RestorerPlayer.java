@@ -11,7 +11,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.google.common.collect.Lists;
 import com.sitrica.restorer.managers.SaveManager.SortType;
 
 public class RestorerPlayer {
@@ -80,8 +79,12 @@ public class RestorerPlayer {
 		return saves.add(save);
 	}
 
+	public void removeInventorySave(InventorySave save) {
+		saves.remove(save);
+	}
+
 	public List<InventorySave> getInventorySaves() {
-		return Lists.newArrayList(saves);
+		return saves;
 	}
 
 	/**

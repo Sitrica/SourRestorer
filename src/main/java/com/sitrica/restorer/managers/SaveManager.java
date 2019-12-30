@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +24,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import com.google.common.collect.Lists;
 import com.sitrica.core.manager.Manager;
+import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
 import com.sitrica.restorer.objects.InventorySave;
 import com.sitrica.restorer.objects.RestorerPlayer;
@@ -80,6 +84,26 @@ public class SaveManager extends Manager {
 		Arrays.stream(DamageCause.values()).forEach(cause -> reasons.add(cause.name()));
 		// When a user with permissions manually saves an inventory.
 		reasons.add("MANUAL");
+		SourRestorer instance = SourRestorer.getInstance();
+		FileConfiguration configuration = instance.getConfig();
+
+		// Time delete task.
+		if (configuration.getBoolean("delete-system.time.enabled", false)) {
+			if (!configuration.getBoolean("delete-system.time.only-when-loaded", true)) {
+				String time = configuration.getString("delete-system.time.task-cycle", "12 hours");
+				Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+					PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
+					Iterator<RestorerPlayer> iterator = playerManager.getAllPlayers().iterator();
+					String after = configuration.getString("delete-system.time.after", "30 days");
+					long milliseconds = IntervalUtils.getMilliseconds(after);
+					while (iterator.hasNext()) {
+						RestorerPlayer player = iterator.next();
+						player.getInventorySaves()
+								.removeIf(save -> System.currentTimeMillis() - save.getTimestamp() > milliseconds);
+					}
+				}, 1, IntervalUtils.getInterval(time));
+			}
+		}
 	}
 
 	/**
@@ -107,12 +131,23 @@ public class SaveManager extends Manager {
 	}
 
 	public boolean addInventorySave(UUID uuid, String reason, Location location, ItemStack... contents) {
-		PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
-		Optional<RestorerPlayer> restorerPlayer = playerManager.getRestorerPlayer(uuid);
-		if (!restorerPlayer.isPresent())
+		SourRestorer instance = SourRestorer.getInstance();
+		PlayerManager playerManager = instance.getManager(PlayerManager.class);
+		Optional<RestorerPlayer> optional = playerManager.getRestorerPlayer(uuid);
+		if (!optional.isPresent())
 			return false;
 		addReason(reason);
-		return restorerPlayer.get().addInventorySave(new InventorySave(uuid, reason, location, contents)); 
+		RestorerPlayer restorerPlayer = optional.get();
+		// Delete system max-limit
+		if (instance.getConfig().getBoolean("delete-system.max-limit.enabled", false)) {
+			int size = restorerPlayer.getInventorySaves().size();
+			int limit = instance.getConfig().getInt("delete-system.max-limit.limit", 1000);
+			if (limit < 1)
+				limit = 1;
+			if (size > limit)
+				restorerPlayer.getInventorySaves().subList(0, limit - 1);
+		}
+		return restorerPlayer.addInventorySave(new InventorySave(uuid, reason, location, contents)); 
 	}
 
 	@EventHandler

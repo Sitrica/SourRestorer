@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.ServicePriority;
 
 import com.sitrica.core.SourPlugin;
 import com.sitrica.core.command.CommandHandler;
@@ -30,6 +32,7 @@ public class SourRestorer extends SourPlugin {
 	private CommandHandler commandHandler;
 	private ManagerHandler managerHandler;
 	private static SourRestorer instance;
+	private SourRestorerAPI API;
 
 	public SourRestorer() {
 		super("&7[&aSourRestorer&7]&r ", packageName + ".managers");
@@ -66,6 +69,8 @@ public class SourRestorer extends SourPlugin {
 		commandHandler = new CommandHandler(this, SourRestorerCommand.class, packageName + ".commands");
 		getCommand("sourrestorer").setExecutor(commandHandler);
 		DefaultPlaceholders.register(this);
+		API = new SourRestorerAPI(this);
+		Bukkit.getServicesManager().register(SourRestorerAPI.class, API, this, ServicePriority.Normal);
 		consoleMessage("has been enabled!");
 	}
 

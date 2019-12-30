@@ -13,6 +13,20 @@ close:
 
 # All configurations relating to inventories.
 inventories:
+    confirmation-inventory:
+        title: "&4Confirm action?"
+        border:
+            enabled: true
+            title: "&a"
+            material: "BLACK_STAINED_GLASS_PANE"
+            glowing: true
+        confirm:
+            title: "&a&lCONFIRM"
+            material: "EMERALD_BLOCK"
+            glowing: true
+        decline:
+            title: "&c&lCANCEL"
+            material: "REDSTONE_BLOCK"
     restore-selector:
         title: "&4Restore selector"
         back:
@@ -94,6 +108,9 @@ inventories:
                 - "&bDistance from you: %distance%"
                 - "&fTimestamp: %timestamp%"
                 - "&cDeath cause: &l%cause%"
+                - ""
+                - "&f&lMiddle click to star this inventory."
+                - "&c&lDrop click to delete this inventory."
             material: "CHEST"
         restore-history:
             title: "&eRestore history"

@@ -23,6 +23,7 @@ public class InventorySave {
 	private final long timestamp;
 	private final String reason;
 	private final UUID uuid;
+	private boolean stared;
 
 	public InventorySave(UUID uuid, String reason, Location deathLocation, ItemStack... contents) {
 		this(System.currentTimeMillis(), uuid, reason, deathLocation, contents);
@@ -38,6 +39,14 @@ public class InventorySave {
 
 	public String getReason() {
 		return reason;
+	}
+
+	public void setStared(boolean stared) {
+		this.stared = stared;
+	}
+
+	public boolean isStared() {
+		return stared;
 	}
 
 	public UUID getOwnerUUID() {

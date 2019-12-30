@@ -2,14 +2,17 @@ package com.sitrica.restorer.inventories;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.collect.Lists;
 import com.sitrica.core.items.ItemStackBuilder;
 import com.sitrica.core.messaging.ListMessageBuilder;
 import com.sitrica.core.messaging.MessageBuilder;
@@ -48,7 +51,7 @@ public class SavesInventory implements InventoryProvider {
 		contents.fillBorders(ClickableItem.empty(new ItemStackBuilder(instance, "inventories.save-inventory.border")
 				.setPlaceholderObject(restorerPlayer)
 				.build()));
-		List<InventorySave> saves = owner.getInventorySaves();
+		List<InventorySave> saves = Lists.newArrayList(owner.getInventorySaves());
 		SortType sort = restorerPlayer.getSortType();
 		sort.sort(player, saves);
 		if (saves.size() <= 0)
@@ -56,6 +59,11 @@ public class SavesInventory implements InventoryProvider {
 		String reason = restorerPlayer.getSortingReason();
 		if (reason != null)
 			saves.removeIf(save -> save.getReason().equalsIgnoreCase(reason));
+		List<InventorySave> stars = saves.stream()
+				.filter(save -> save.isStared())
+				.collect(Collectors.toList());
+		saves.removeIf(save -> save.isStared());
+		saves.addAll(stars);
 		Pagination pagination = contents.pagination();
 		ClickableItem[] items = saves.stream()
 				.map(save -> {
@@ -70,15 +78,34 @@ public class SavesInventory implements InventoryProvider {
 							})
 							.setPlaceholderObject(save)
 							.build();
+					if (save.isStared())
+						itemstack.setType(Material.NETHER_STAR);
 					return ClickableItem.of(itemstack, event -> {
-							Inventory inventory = Bukkit.createInventory(null, 6 * 9, new MessageBuilder(instance, false, "inventories.view-inventory.title")
-									.fromConfiguration(inventories)
-									.setPlaceholderObject(save)
-									.get());
-							inventory.setContents(save.getContents());
-							player.openInventory(inventory);
+						if (event.getClick() == ClickType.MIDDLE) {
+							save.setStared(!save.isStared());
+							open(player);
+						} else if (event.getClick() == ClickType.DROP) {
+							if (!player.hasPermission("sourrestorer.delete")) {
+								new MessageBuilder(instance, "messages.no-permission").send(player);
+								return;
+							}
+							Consumer<Boolean> consumer = accept -> {
+								if (accept == true)
+									owner.removeInventorySave(save);
+								open(player);
+								return;
+							};
+							if (!instance.getConfig().getBoolean("disable-confirmation-delete", false)) {
+								new ConfirmationInventory(consumer);
+							} else {
+								consumer.accept(true);
+								new SoundPlayer(instance, "click").playTo(player);
+							}
+						} else {
+							new ViewInventory(save).open(player);
 							new SoundPlayer(instance, "click").playTo(player);
-						});
+						}
+					});
 				})
 				.toArray(size -> new ClickableItem[size]);
 		pagination.setItems(items);

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -69,11 +70,18 @@ public class PlayerManager extends Manager {
 				}));
 	}
 
+	public Set<RestorerPlayer> getAllPlayers() {
+		return database.getKeys().stream()
+				.map(key -> database.get(key))
+				.collect(Collectors.toSet());
+	}
+
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		RestorerPlayer restorerPlayer = getRestorerPlayer(event.getPlayer());
-		SourRestorer.getInstance().debugMessage("Loaded player " + player.getUniqueId());
+		SourRestorer instance = SourRestorer.getInstance();
+		instance.debugMessage("Loaded player " + player.getUniqueId());
 		InventorySave load = restorerPlayer.getOnlineLoad();
 		if (load != null) {
 			restorerPlayer.restore(load);
@@ -81,15 +89,20 @@ public class PlayerManager extends Manager {
 		}
 		OfflineSave offline = restorerPlayer.getOfflineSave();
 		offline.load(player);
+		if (instance.getConfig().getBoolean("delete-system.login", false))
+			restorerPlayer.getInventorySaves().clear();
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		RestorerPlayer restorerPlayer = getRestorerPlayer(player);
-		database.put(player.getUniqueId() + "", restorerPlayer);
 		restorerPlayer.setOfflineSave(new OfflineSave(player));
-		Bukkit.getScheduler().runTaskLaterAsynchronously(SourRestorer.getInstance(), () -> players.removeIf(p -> p.getUniqueId().equals(player.getUniqueId())), 1);
+		SourRestorer instance = SourRestorer.getInstance();
+		if (instance.getConfig().getBoolean("delete-system.logout", false))
+			restorerPlayer.getInventorySaves().clear();
+		database.put(player.getUniqueId() + "", restorerPlayer);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> players.removeIf(p -> p.getUniqueId().equals(player.getUniqueId())), 1);
 	}
 
 }

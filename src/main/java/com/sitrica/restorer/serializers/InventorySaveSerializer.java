@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.JsonArray;
@@ -18,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.sitrica.core.database.Serializer;
+import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
 import com.sitrica.restorer.managers.SaveManager;
 import com.sitrica.restorer.objects.InventorySave;
@@ -30,6 +32,7 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 		if (save == null)
 			return json;
 		json.add("location", context.serialize(save.getDeathLocation(), Location.class));
+		json.addProperty("stared", save.isStared());
 		json.addProperty("reason", save.getReason());
 		json.addProperty("timestamp", save.getTimestamp());
 		json.addProperty("uuid", save.getOwnerUUID() + "");
@@ -60,6 +63,8 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 		if (locationElement == null)
 			return null;
 		Location location = context.deserialize(locationElement, Location.class);
+		if (location == null)
+			return null;
 		JsonElement timestampElement = object.get("timestamp");
 		if (timestampElement == null)
 			return null;
@@ -101,6 +106,21 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 		}
 		InventorySave save = new InventorySave(timestamp, uuid, reason, location, contents.toArray(new ItemStack[contents.size()]));
 		save.addAllRestoreLog(log);
+		JsonElement staredElement = object.get("stared");
+		if (staredElement != null)
+			save.setStared(staredElement.getAsBoolean());
+
+		// Loaded deletion check.
+		SourRestorer instance = SourRestorer.getInstance();
+		FileConfiguration configuration = instance.getConfig();
+		if (configuration.getBoolean("delete-system.time.enabled", false)) {
+			if (configuration.getBoolean("delete-system.time.only-when-loaded", true)) {
+				String after = configuration.getString("delete-system.time.after", "30 days");
+				long milliseconds = IntervalUtils.getMilliseconds(after);
+				if (System.currentTimeMillis() - save.getTimestamp() > milliseconds)
+					return null;
+			}
+		}
 		return save;
 	}
 

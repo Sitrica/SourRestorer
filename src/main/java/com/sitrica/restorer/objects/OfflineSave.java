@@ -14,20 +14,21 @@ import com.sitrica.restorer.managers.PlayerManager;
 
 public class OfflineSave {
 
-	private final ItemStack[] contents;
+	private final ItemStack[] contents, enderchest;
 	private final Location logout;
 	private final long timestamp;
 	private final UUID uuid;
 
 	public OfflineSave(Player player) {
-		this(player.getUniqueId(), player.getLocation(), player.getInventory().getContents());
+		this(player.getUniqueId(), player.getLocation(), player.getEnderChest().getContents(), player.getInventory().getContents());
 	}
 
-	public OfflineSave(UUID uuid, Location logout, ItemStack... contents) {
-		this(System.currentTimeMillis(), uuid, logout, contents);
+	public OfflineSave(UUID uuid, Location logout, ItemStack[] enderchest, ItemStack... contents) {
+		this(System.currentTimeMillis(), uuid, logout, enderchest, contents);
 	}
 
-	public OfflineSave(long timestamp, UUID uuid, Location logout, ItemStack... contents) {
+	public OfflineSave(long timestamp, UUID uuid, Location logout, ItemStack[] enderchest, ItemStack... contents) {
+		this.enderchest = enderchest;
 		this.timestamp = timestamp;
 		this.contents = contents;
 		this.logout = logout;
@@ -57,12 +58,20 @@ public class OfflineSave {
 		return timestamp;
 	}
 
+	public ItemStack[] getEnderchestContents() {
+		return enderchest;
+	}
+
 	public void load(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		if (!Arrays.equals(inventory.getContents(), contents)) {
 			// TODO support armour properly.
 			inventory.clear();
 			inventory.setContents(contents);
+		}
+		if (!Arrays.equals(player.getEnderChest().getContents(), enderchest)) {
+			player.getEnderChest().clear();
+			player.getEnderChest().setContents(enderchest);
 		}
 	}
 
