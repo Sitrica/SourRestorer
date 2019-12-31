@@ -6,9 +6,11 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.sitrica.core.manager.Manager;
 import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
@@ -87,22 +90,55 @@ public class SaveManager extends Manager {
 		SourRestorer instance = SourRestorer.getInstance();
 		FileConfiguration configuration = instance.getConfig();
 
+		PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
 		// Time delete task.
 		if (configuration.getBoolean("delete-system.time.enabled", false)) {
 			if (!configuration.getBoolean("delete-system.time.only-when-loaded", true)) {
 				String time = configuration.getString("delete-system.time.task-cycle", "12 hours");
 				Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
-					PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
 					Iterator<RestorerPlayer> iterator = playerManager.getAllPlayers().iterator();
 					String after = configuration.getString("delete-system.time.after", "30 days");
 					long milliseconds = IntervalUtils.getMilliseconds(after);
 					while (iterator.hasNext()) {
 						RestorerPlayer player = iterator.next();
-						player.getInventorySaves()
-								.removeIf(save -> System.currentTimeMillis() - save.getTimestamp() > milliseconds);
+						player.removeSaveIf(save -> System.currentTimeMillis() - save.getTimestamp() > milliseconds);
 					}
 				}, 1, IntervalUtils.getInterval(time));
 			}
+		}
+		// Banned delete task
+		if (configuration.getBoolean("delete-system.banned.enabled", false)) {
+			String time = configuration.getString("delete-system.banned.task-cycle", "1 day");
+			Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+				Iterator<RestorerPlayer> iterator = playerManager.getAllPlayers().iterator();
+				while (iterator.hasNext()) {
+					RestorerPlayer restorerPlayer = iterator.next();
+					Optional<Player> optional = restorerPlayer.getPlayer();
+					if (!optional.isPresent())
+						continue;
+					Player player = optional.get();
+					if (!player.isBanned())
+						continue;
+					restorerPlayer.clearSaves();
+				}
+			}, 1, IntervalUtils.getInterval(time));
+		}
+
+		// Auto-save
+		if (configuration.getBoolean("auto-save.enabled", false)) {
+			String time = configuration.getString("auto-save.task-cycle", "1 day");
+			int limit = configuration.getInt("auto-save.limit", 5);
+			Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					RestorerPlayer restorerPlayer = playerManager.getRestorerPlayer(player);
+					if (limit > 0)
+						restorerPlayer.getInventorySaves().stream()
+								.filter(save -> save.getReason().equalsIgnoreCase("AUTO-SAVE"))
+								.sorted(Comparator.comparing(InventorySave::getTimestamp))
+								.limit(limit - 1);
+					addInventorySave(player, "AUTO-SAVE");
+				}
+			}, 1, IntervalUtils.getInterval(time));
 		}
 	}
 
@@ -126,6 +162,31 @@ public class SaveManager extends Manager {
 		return list;
 	}
 
+	/**
+	 * Checks if an inventory save can be deleted based on configurations.
+	 * All checks get passed through this.
+	 * 
+	 * @param save The InventorySave to check.
+	 * @param player The RestorerPlayer that is getting the inventory save deleted from.
+	 * @return boolean if the configurations allow such deletion.
+	 */
+	public boolean canDelete(InventorySave save, RestorerPlayer player) {
+		FileConfiguration configuration = SourRestorer.getInstance().getConfig();
+		if (save.isStared() && !configuration.getBoolean("delete-system.delete-stared", false))
+			return false;
+		if (configuration.getBoolean("delete-system.reasons.enabled", false)) {
+			Set<String> reasons = configuration.getStringList("delete-system.reasons.list").stream()
+					.map(reason -> reason.toUpperCase(Locale.US))
+					.collect(Collectors.toSet());
+			if (configuration.getBoolean("delete-system.reasons.whitelist", false)) {
+				if (reasons.contains(save.getReason()))
+					return false;
+			} else if (!reasons.contains(save.getReason()))
+				return false;
+		}
+		return true;
+	}
+
 	public boolean addInventorySave(Player player, String reason) {
 		return addInventorySave(player.getUniqueId(), reason, player.getLocation(), player.getInventory().getContents());
 	}
@@ -144,8 +205,14 @@ public class SaveManager extends Manager {
 			int limit = instance.getConfig().getInt("delete-system.max-limit.limit", 1000);
 			if (limit < 1)
 				limit = 1;
-			if (size > limit)
+			if (size > limit) {
+				// Jank way to not remove specials that can't be deleted aswell as cutting list size.
+				Set<InventorySave> specials = Sets.newConcurrentHashSet(restorerPlayer.getInventorySaves());
+				specials.removeIf(save -> canDelete(save, restorerPlayer));
 				restorerPlayer.getInventorySaves().subList(0, limit - 1);
+				restorerPlayer.removeSaveIf(save -> canDelete(save, restorerPlayer));
+				specials.forEach(save -> restorerPlayer.addInventorySave(save));
+			}
 		}
 		return restorerPlayer.addInventorySave(new InventorySave(uuid, reason, location, contents)); 
 	}

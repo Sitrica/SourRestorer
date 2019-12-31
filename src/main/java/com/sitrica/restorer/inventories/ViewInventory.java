@@ -71,7 +71,7 @@ public class ViewInventory implements InventoryProvider {
 		contents.set(4, 5, ClickableItem.of(new ItemStackBuilder(instance, "inventories.view-inventory.restore-icon")
 				.setPlaceholderObject(save)
 				.build(), e -> {
-					new SavesInventory(save.getPlayer().get()).open(player);
+					new RestoreSelectorInventory(save).open(player);
 					new SoundPlayer(instance, "click").playTo(player);
 				}
 		));

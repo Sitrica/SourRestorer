@@ -13,6 +13,7 @@ general:
 
 database:
     # Types are MYSQL and H2.
+    # H2 is a multithread file database, we utilize it in async. A better alternative to SQLite.
     type: "H2"
     autosave: "5 minutes"
     # Table name configuration for databases.
@@ -22,6 +23,18 @@ database:
         address: "localhost"
         password: "password"
         name: "example"
+
+# Auto-save will save everyones inventory every time cycle defined below.
+auto-save:
+    enabled: true
+    # The time in which to save everyones inventory.
+    # months, weeks, minutes, ticks etc, all accepted.
+    # Multiple accepted too: 5 days and 2 weeks
+    task-cycle: "15 hours"
+    # The max amount of auto-saves that can be present at a time for a player.
+    # All older auto-saves will be deleted after 5 to make room for new auto-saves.
+    # Set to -1 to disable, but be advised that this may build up a big database over time.
+    auto-save-limit: 5
 
 # Disables the confirmation menu that pops up on every inventory save deletion.
 disable-confirmation-delete: false
@@ -42,7 +55,7 @@ delete-system:
         # This is for the task that runs when "only-when-loaded" is set to true.
         task-cycle: "12 hours"
     # If max-limit is enabled, all old inventories that pass the limit
-    # will be deleted, oldest first in order.
+    # will be deleted, oldest first to be removed.
     max-limit:
         enabled: false
         limit: 1000

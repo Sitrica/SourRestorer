@@ -84,13 +84,13 @@ public class PlayerManager extends Manager {
 		instance.debugMessage("Loaded player " + player.getUniqueId());
 		InventorySave load = restorerPlayer.getOnlineLoad();
 		if (load != null) {
-			restorerPlayer.restore(load);
+			load.restoreInventory();
 			return;
 		}
 		OfflineSave offline = restorerPlayer.getOfflineSave();
 		offline.load(player);
 		if (instance.getConfig().getBoolean("delete-system.login", false))
-			restorerPlayer.getInventorySaves().clear();
+			restorerPlayer.clearSaves();
 	}
 
 	@EventHandler
@@ -100,7 +100,7 @@ public class PlayerManager extends Manager {
 		restorerPlayer.setOfflineSave(new OfflineSave(player));
 		SourRestorer instance = SourRestorer.getInstance();
 		if (instance.getConfig().getBoolean("delete-system.logout", false))
-			restorerPlayer.getInventorySaves().clear();
+			restorerPlayer.clearSaves();
 		database.put(player.getUniqueId() + "", restorerPlayer);
 		Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> players.removeIf(p -> p.getUniqueId().equals(player.getUniqueId())), 1);
 	}

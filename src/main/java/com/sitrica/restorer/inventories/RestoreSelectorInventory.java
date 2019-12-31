@@ -52,7 +52,7 @@ public class RestoreSelectorInventory implements InventoryProvider {
 		contents.set(1, 3, ClickableItem.of(new ItemStackBuilder(instance, "inventories.restore-selector.instant")
 				.setPlaceholderObject(save)
 				.build(), e -> {
-					save.getPlayer().get().restore(save);
+					save.restoreInventory();
 					save.addRestoreLog(player.getUniqueId());
 					new SoundPlayer(instance, "restore").playTo(player);
 					player.closeInventory();

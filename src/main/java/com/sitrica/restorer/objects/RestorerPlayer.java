@@ -5,12 +5,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
 
+import com.sitrica.restorer.SourRestorer;
+import com.sitrica.restorer.managers.SaveManager;
 import com.sitrica.restorer.managers.SaveManager.SortType;
 
 public class RestorerPlayer {
@@ -79,7 +82,19 @@ public class RestorerPlayer {
 		return saves.add(save);
 	}
 
+	public void clearSaves() {
+		SaveManager saveManager = SourRestorer.getInstance().getManager(SaveManager.class);
+		saves.removeIf(save -> saveManager.canDelete(save, this));
+	}
+
+	public void removeSaveIf(Predicate<InventorySave> predicate) {
+		SaveManager saveManager = SourRestorer.getInstance().getManager(SaveManager.class);
+		saves.removeIf(save -> saveManager.canDelete(save, this) && saveManager.canDelete(save, this));
+	}
+
 	public void removeInventorySave(InventorySave save) {
+		if (!SourRestorer.getInstance().getManager(SaveManager.class).canDelete(save, this))
+			return;
 		saves.remove(save);
 	}
 
@@ -98,18 +113,8 @@ public class RestorerPlayer {
 	}
 
 	public void setOnlineLoad(InventorySave save) {
-		this.save = save;
-	}
-
-	public void restore(InventorySave save) {
-		if (isOnline()) {
-			//TODO handle helmets and armour properly.
-			PlayerInventory inventory = getPlayer().get().getInventory();
-			inventory.clear();
-			inventory.setContents(save.getContents());
-			save = null;
-			return;
-		}
+		Validate.isTrue(this.save.getOwnerUUID().equals(save.getOwnerUUID()), "The uuid of the setOnlineLoad being set " +
+				"must match the same uuid as the save.");
 		this.save = save;
 	}
 

@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -86,12 +87,20 @@ public class InventorySave {
 		if (!restorerPlayer.isPresent())
 			return false;
 		Optional<Player> player = restorerPlayer.get().getPlayer();
-		if (!player.isPresent())
+		if (!player.isPresent()) //TODO do offline inventory restoring.
 			return false;
-		//TODO else do offline inventory restoring.
 		PlayerInventory playerInventory = player.get().getInventory();
 		playerInventory.clear();
 		playerInventory.setContents(contents);
+		//TODO handle armour
+
+		// Automatic delete
+		FileConfiguration configuration = SourRestorer.getInstance().getConfig();
+		if (configuration.getBoolean("delete-system.restored.enabled", false)) {
+			int amount = configuration.getInt("delete-system.restored.amount", 1);
+			if (logs.keySet().size() >= amount)
+				restorerPlayer.get().removeInventorySave(this);
+		}
 		return true;
 	}
 
