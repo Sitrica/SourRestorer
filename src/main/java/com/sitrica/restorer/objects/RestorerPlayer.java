@@ -21,10 +21,10 @@ public class RestorerPlayer {
 	private final List<InventorySave> saves = new ArrayList<>();
 	// sort and reason are used in the inventory sorting.
 	private SortType sort = SortType.DATE;
+	private String reason, search;
 	private OfflineSave offline;
 	private InventorySave save;
 	private final UUID uuid;
-	private String reason;
 
 	public RestorerPlayer(UUID uuid, Collection<InventorySave> saves) {
 		this.saves.addAll(saves);
@@ -45,6 +45,14 @@ public class RestorerPlayer {
 
 	public void setSortType(SortType sort) {
 		this.sort = sort;
+	}
+
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
 	}
 
 	public OfflineSave getOfflineSave() {

@@ -64,6 +64,24 @@ public class SavesInventory implements InventoryProvider {
 				.collect(Collectors.toList());
 		saves.removeIf(save -> save.isStared());
 		saves.addAll(stars);
+		String search = restorerPlayer.getSearch();
+		if (search != null)
+			saves.removeIf(save -> {
+				for (ItemStack itemstack : save.getContents()) {
+					if (itemstack == null)
+						continue;
+					if (itemstack.getType().name().contains(search.toUpperCase(Locale.US)))
+						return false;
+					String display = itemstack.getItemMeta().getDisplayName().toLowerCase(Locale.US);
+					if (display.contains(search.toLowerCase(Locale.US)))
+						return false;
+					for (String lore : itemstack.getItemMeta().getLore()) {
+						if (lore.toLowerCase(Locale.US).contains(search.toLowerCase(Locale.US)))
+							return false;
+					}
+				}
+				return true;
+			});
 		Pagination pagination = contents.pagination();
 		ClickableItem[] items = saves.stream()
 				.map(save -> {
@@ -128,6 +146,16 @@ public class SavesInventory implements InventoryProvider {
 						return;
 					}
 					new ReasonsInventory(owner).open(player);
+					new SoundPlayer(instance, "click").playTo(player);
+				}));
+		contents.set(0, 4, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.search")
+				.replace("%search%", search == null ? "Not set" : search)
+				.setPlaceholderObject(owner)
+				.build(),
+				e -> {
+					new AnvilMenu(new ItemStackBuilder(instance, "inventories.search-anvil.search")
+							.build(), player, result -> restorerPlayer.setSearch(result));
+					open(player);
 					new SoundPlayer(instance, "click").playTo(player);
 				}));
 		contents.set(0, 3, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.sort." + sort.name().toLowerCase(Locale.US)).build(),

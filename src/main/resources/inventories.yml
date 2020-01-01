@@ -27,6 +27,10 @@ inventories:
         decline:
             title: "&c&lCANCEL"
             material: "REDSTONE_BLOCK"
+    search-anvil:
+        search:
+            title: "Search saves..."
+            material: "PAPER"
     restore-selector:
         title: "&4Restore selector"
         back:
@@ -118,6 +122,14 @@ inventories:
                 - "&7Click to see all the inventories"
                 - "&7that admins have restored to this player."
             material: "CHEST"
+        search:
+            title: "&f&lSearch"
+            lore:
+                - "&7Click to enter search by item type, name, and lore."
+                - ""
+                - "&fCurrently filtering search"
+                - "&ffrom input: &l%search%"
+            material: "PAPER"
         damage-cause:
             title: "&cSort by damage cause."
             lore:
