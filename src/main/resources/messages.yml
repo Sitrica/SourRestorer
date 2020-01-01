@@ -23,6 +23,9 @@ messages:
     player-not-online: "&cThe player %player% is not online anymore."
     player-not-present: "&cThe player &l%player% &chas never logged on to this server before."
 
+saves:
+    enderchest-edited: "&aSaved enderchest edit on &l%player%&a."
+
 # All messages relating to commands.
 commands:
     sourrestorer:

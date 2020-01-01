@@ -174,6 +174,13 @@ public class SavesInventory implements InventoryProvider {
 					open(player);
 					new SoundPlayer(instance, "click").playTo(player);
 				}));
+		contents.set(0, 1, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.enderchest")
+				.setPlaceholderObject(owner)
+				.build(),
+				e -> {
+					new EnderchestEditor(player, owner);
+					new SoundPlayer(instance, "click").playTo(player);
+				}));
 		if (!pagination.isFirst())
 			contents.set(5, 3, ClickableItem.of(new ItemStackBuilder(instance, "previous").build(),
 					e -> {
@@ -182,7 +189,7 @@ public class SavesInventory implements InventoryProvider {
 					}));
 		if (!pagination.isLast())
 			contents.set(5, 5, ClickableItem.of(new ItemStackBuilder(instance, "next").build(),
-					e -> { 
+					e -> {
 						getInventory(player).open(player, pagination.next().getPage());
 						new SoundPlayer(instance, "click").playTo(player);
 					}));

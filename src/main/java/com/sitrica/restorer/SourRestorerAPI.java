@@ -1,5 +1,6 @@
 package com.sitrica.restorer;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -65,6 +66,13 @@ public class SourRestorerAPI {
 	 */
 	public boolean addInventorySave(Player player, String reason) {
 		return saves.addInventorySave(player, reason);
+	}
+
+	/**
+	 * @return List of reasons sorted alphabetically.
+	 */
+	public List<String> getReasons() {
+		return saves.getReasons();
 	}
 
 }

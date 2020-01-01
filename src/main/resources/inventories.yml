@@ -97,6 +97,8 @@ inventories:
                 - "&7Click to go back to"
                 - "&7the saved inventories."
             material: "CHEST"
+    enderchest-editor:
+        title: "&5Enderchest of %player%"
     save-inventory:
         title: "&4Inventories of %player%"
         border:
@@ -130,6 +132,12 @@ inventories:
                 - "&fCurrently filtering search"
                 - "&ffrom input: &l%search%"
             material: "PAPER"
+        enderchest:
+            title: "&5&lEnderchest"
+            lore:
+                - "&7Click to edit and/or view %player%'s enderchest."
+                - "&7Offline editing works aswell."
+            material: "ENDER_CHEST"
         damage-cause:
             title: "&cSort by damage cause."
             lore:
