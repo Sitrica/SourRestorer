@@ -13,6 +13,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.sitrica.core.database.Serializer;
 import com.sitrica.restorer.objects.InventorySave;
+import com.sitrica.restorer.objects.OfflineSave;
 import com.sitrica.restorer.objects.RestorerPlayer;
 
 public class RestorerPlayerSerializer implements Serializer<RestorerPlayer> {
@@ -27,6 +28,7 @@ public class RestorerPlayerSerializer implements Serializer<RestorerPlayer> {
 		player.getInventorySaves().forEach(save -> saves.add(context.serialize(save, InventorySave.class)));
 		json.add("saves", saves);
 		json.add("save", context.serialize(player.getOnlineLoad(), InventorySave.class));
+		json.add("offline", context.serialize(player.getOfflineSave(), OfflineSave.class));
 		return json;
 	}
 
@@ -56,6 +58,11 @@ public class RestorerPlayerSerializer implements Serializer<RestorerPlayer> {
 			InventorySave save = context.deserialize(saveElement, InventorySave.class);
 			if (save != null)
 				player.setOnlineLoad(save);
+		}
+		JsonElement offlineSaveElement = object.get("offline");
+		if (offlineSaveElement != null) {
+			OfflineSave offline = context.deserialize(offlineSaveElement, OfflineSave.class);
+			player.setOfflineSave(offline);
 		}
 		return player;
 	}

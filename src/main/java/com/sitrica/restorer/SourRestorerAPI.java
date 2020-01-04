@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.sitrica.restorer.managers.PlayerManager;
 import com.sitrica.restorer.managers.SaveManager;
+import com.sitrica.restorer.objects.ArmourSave;
 import com.sitrica.restorer.objects.RestorerPlayer;
 
 public class SourRestorerAPI {
@@ -50,11 +51,12 @@ public class SourRestorerAPI {
 	 * @param uuid The player to have this inventory save based on.
 	 * @param reason The reason of the save, if reason not registered, it will be saved.
 	 * @param deathLocation The location of the inventory save.
+	 * @param armour An ArmourSave snapshot, can be manually made.
 	 * @param contents The itemstacks of this inventory save.
 	 * @return boolean if the save was added.
 	 */
-	public boolean addInventorySave(UUID uuid, String reason, Location deathLocation, ItemStack... contents) {
-		return saves.addInventorySave(uuid, reason, deathLocation, contents);
+	public boolean addInventorySave(UUID uuid, String reason, Location deathLocation, ArmourSave armour, ItemStack... contents) {
+		return saves.addInventorySave(uuid, reason, deathLocation, armour, contents);
 	}
 
 	/**

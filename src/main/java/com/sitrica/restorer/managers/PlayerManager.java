@@ -22,9 +22,11 @@ import com.sitrica.core.database.Serializer;
 import com.sitrica.core.manager.Manager;
 import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
+import com.sitrica.restorer.objects.ArmourSave;
 import com.sitrica.restorer.objects.InventorySave;
 import com.sitrica.restorer.objects.OfflineSave;
 import com.sitrica.restorer.objects.RestorerPlayer;
+import com.sitrica.restorer.serializers.ArmourSaveSerializer;
 import com.sitrica.restorer.serializers.InventorySaveSerializer;
 import com.sitrica.restorer.serializers.RestorerPlayerSerializer;
 
@@ -37,7 +39,9 @@ public class PlayerManager extends Manager {
 		super(true);
 		SourRestorer instance = SourRestorer.getInstance();
 		FileConfiguration configuration = instance.getConfig();
-		Map<Type, Serializer<?>> map = ImmutableMap.of(RestorerPlayer.class, new RestorerPlayerSerializer(), InventorySave.class, new InventorySaveSerializer());
+		Map<Type, Serializer<?>> map = ImmutableMap.of(RestorerPlayer.class, new RestorerPlayerSerializer(),
+				InventorySave.class, new InventorySaveSerializer(),
+				ArmourSave.class, new ArmourSaveSerializer());
 		database = getNewDatabase(instance, "player-table", RestorerPlayer.class, map);
 		String interval = configuration.getString("database.autosave", "5 miniutes");
 		Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> players.forEach(player -> database.put(player.getUniqueId() + "", player)), 0, IntervalUtils.getInterval(interval));

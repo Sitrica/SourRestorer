@@ -18,10 +18,11 @@ import com.sitrica.restorer.managers.SaveManager.SortType;
 
 public class RestorerPlayer {
 
-	private final List<InventorySave> saves = new ArrayList<>();
-	// sort and reason are used in the inventory sorting.
+	// sort and reason are used in the inventory sorting temp.
 	private SortType sort = SortType.DATE;
 	private String reason, search;
+
+	private final List<InventorySave> saves = new ArrayList<>();
 	private OfflineSave offline;
 	private InventorySave save;
 	private final UUID uuid;

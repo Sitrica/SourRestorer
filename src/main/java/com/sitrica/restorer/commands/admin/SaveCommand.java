@@ -47,7 +47,7 @@ public class SaveCommand extends AdminCommand {
 		SaveManager saveManager = instance.getManager(SaveManager.class);
 		if (!player.isPresent()) {
 			OfflineSave offline = restorerPlayer.get().getOfflineSave();
-			saveManager.addInventorySave(target.getUniqueId(), "MANUAL", offline.getLogoutLocation(), offline.getContents());
+			saveManager.addInventorySave(target.getUniqueId(), "MANUAL", offline.getLogoutLocation(), offline.getArmourSave(), offline.getContents());
 		} else {
 			saveManager.addInventorySave(player.get(), "MANUAL");
 		}

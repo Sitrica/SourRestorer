@@ -29,6 +29,7 @@ import com.google.common.collect.Sets;
 import com.sitrica.core.manager.Manager;
 import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
+import com.sitrica.restorer.objects.ArmourSave;
 import com.sitrica.restorer.objects.InventorySave;
 import com.sitrica.restorer.objects.RestorerPlayer;
 
@@ -188,10 +189,10 @@ public class SaveManager extends Manager {
 	}
 
 	public boolean addInventorySave(Player player, String reason) {
-		return addInventorySave(player.getUniqueId(), reason, player.getLocation(), player.getInventory().getContents());
+		return addInventorySave(player.getUniqueId(), reason, player.getLocation(), new ArmourSave(player), player.getInventory().getContents());
 	}
 
-	public boolean addInventorySave(UUID uuid, String reason, Location location, ItemStack... contents) {
+	public boolean addInventorySave(UUID uuid, String reason, Location location, ArmourSave armour, ItemStack... contents) {
 		SourRestorer instance = SourRestorer.getInstance();
 		PlayerManager playerManager = instance.getManager(PlayerManager.class);
 		Optional<RestorerPlayer> optional = playerManager.getRestorerPlayer(uuid);
@@ -214,7 +215,7 @@ public class SaveManager extends Manager {
 				specials.forEach(save -> restorerPlayer.addInventorySave(save));
 			}
 		}
-		return restorerPlayer.addInventorySave(new InventorySave(uuid, reason, location, contents)); 
+		return restorerPlayer.addInventorySave(new InventorySave(uuid, reason, location, armour, contents)); 
 	}
 
 	@EventHandler
@@ -225,7 +226,7 @@ public class SaveManager extends Manager {
 		PlayerInventory inventory = player.getInventory();
 		if (isEmpty(inventory))
 			return;
-		addInventorySave(player.getUniqueId(), event.getCause() + "", player.getLocation(), inventory.getContents());
+		addInventorySave(player, event.getCause() + "");
 	}
 
 	public boolean isEmpty(Inventory inventory) {

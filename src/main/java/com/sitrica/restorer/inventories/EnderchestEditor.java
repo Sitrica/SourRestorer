@@ -49,7 +49,7 @@ public class EnderchestEditor {
 				return;
 			OfflineSave old = owner.getOfflineSave();
 			ItemStack[] contents = enderchest.getContents();
-			OfflineSave offline = new OfflineSave(old.getLastLogout(), old.getOwnerUUID(), old.getLogoutLocation(), contents, old.getContents());
+			OfflineSave offline = new OfflineSave(old.getLastLogout(), old.getLogoutLocation(), contents, old.getArmourSave(), old.getContents());
 			owner.setOfflineSave(offline);
 			new MessageBuilder(SourRestorer.getInstance(), "saves.enderchest-edited")
 					.setPlaceholderObject(owner)

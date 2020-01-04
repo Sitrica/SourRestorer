@@ -21,20 +21,26 @@ public class InventorySave {
 	private final Map<UUID, Long> logs = new HashMap<>();
 	private final Location deathLocation;
 	private final ItemStack[] contents;
+	private final ArmourSave armour;
 	private final long timestamp;
 	private final String reason;
 	private final UUID uuid;
 	private boolean stared;
 
-	public InventorySave(UUID uuid, String reason, Location deathLocation, ItemStack... contents) {
-		this(System.currentTimeMillis(), uuid, reason, deathLocation, contents);
+	public InventorySave(Player player, String reason) {
+		this(player.getUniqueId(), reason, player.getLocation(), new ArmourSave(player), player.getInventory().getContents());
 	}
 
-	public InventorySave(long timestamp, UUID uuid, String reason, Location deathLocation, ItemStack... contents) {
+	public InventorySave(UUID uuid, String reason, Location deathLocation, ArmourSave armour, ItemStack... contents) {
+		this(System.currentTimeMillis(), uuid, reason, deathLocation, armour, contents);
+	}
+
+	public InventorySave(long timestamp, UUID uuid, String reason, Location deathLocation, ArmourSave armour, ItemStack... contents) {
 		this.deathLocation = deathLocation;
 		this.timestamp = timestamp;
 		this.contents = contents;
 		this.reason = reason;
+		this.armour = armour;
 		this.uuid = uuid;
 	}
 
@@ -48,6 +54,10 @@ public class InventorySave {
 
 	public boolean isStared() {
 		return stared;
+	}
+
+	public ArmourSave getArmourSave() {
+		return armour;
 	}
 
 	public UUID getOwnerUUID() {

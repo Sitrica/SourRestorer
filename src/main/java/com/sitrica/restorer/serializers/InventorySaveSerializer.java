@@ -22,6 +22,7 @@ import com.sitrica.core.database.Serializer;
 import com.sitrica.core.utils.IntervalUtils;
 import com.sitrica.restorer.SourRestorer;
 import com.sitrica.restorer.managers.SaveManager;
+import com.sitrica.restorer.objects.ArmourSave;
 import com.sitrica.restorer.objects.InventorySave;
 
 public class InventorySaveSerializer implements Serializer<InventorySave> {
@@ -47,6 +48,7 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 			log.add(logJson);
 		});
 		json.add("log", log);
+		json.add("armour", context.serialize(save.getArmourSave(), ArmourSave.class));
 		return json;
 	}
 
@@ -104,7 +106,11 @@ public class InventorySaveSerializer implements Serializer<InventorySave> {
 				log.put(logUuid, logTimestamp);
 			});
 		}
-		InventorySave save = new InventorySave(timestamp, uuid, reason, location, contents.toArray(new ItemStack[contents.size()]));
+		JsonElement armourElement = object.get("armour");
+		if (armourElement == null)
+			return null;
+		ArmourSave armour = context.deserialize(armourElement, ArmourSave.class);
+		InventorySave save = new InventorySave(timestamp, uuid, reason, location, armour, contents.toArray(new ItemStack[contents.size()]));
 		save.addAllRestoreLog(log);
 		JsonElement staredElement = object.get("stared");
 		if (staredElement != null)
