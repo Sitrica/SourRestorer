@@ -78,6 +78,12 @@ inventories:
             lore:
                 - "&7Click to restore this inventory"
                 - "&7to the player %player%."
+        restore-history:
+            title: "&eRestore history"
+            lore:
+                - "&7Click to see a list of admins that"
+                - "&7have restored this inventory to %player%."
+            material: "CHEST"
     damage-causes:
         title: "&4Select Damage Cause"
         border:
@@ -113,16 +119,10 @@ inventories:
                 - "&eLocation: %location%"
                 - "&bDistance from you: %distance%"
                 - "&fTimestamp: %timestamp%"
-                - "&cDeath cause: &l%cause%"
+                - "&cReason: &l%reason%"
                 - ""
                 - "&f&lMiddle click to star this inventory."
                 - "&c&lDrop click to delete this inventory."
-            material: "CHEST"
-        restore-history:
-            title: "&eRestore history"
-            lore:
-                - "&7Click to see all the inventories"
-                - "&7that admins have restored to this player."
             material: "CHEST"
         search:
             title: "&f&lSearch"

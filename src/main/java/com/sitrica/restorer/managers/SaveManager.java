@@ -88,15 +88,16 @@ public class SaveManager extends Manager {
 		Arrays.stream(DamageCause.values()).forEach(cause -> reasons.add(cause.name()));
 		// When a user with permissions manually saves an inventory.
 		reasons.add("MANUAL");
+		reasons.add("AUTO-SAVE");
 		SourRestorer instance = SourRestorer.getInstance();
 		FileConfiguration configuration = instance.getConfig();
 
-		PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
 		// Time delete task.
 		if (configuration.getBoolean("delete-system.time.enabled", false)) {
 			if (!configuration.getBoolean("delete-system.time.only-when-loaded", true)) {
 				String time = configuration.getString("delete-system.time.task-cycle", "12 hours");
 				Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+					PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
 					Iterator<RestorerPlayer> iterator = playerManager.getAllPlayers().iterator();
 					String after = configuration.getString("delete-system.time.after", "30 days");
 					long milliseconds = IntervalUtils.getMilliseconds(after);
@@ -111,6 +112,7 @@ public class SaveManager extends Manager {
 		if (configuration.getBoolean("delete-system.banned.enabled", false)) {
 			String time = configuration.getString("delete-system.banned.task-cycle", "1 day");
 			Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+				PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
 				Iterator<RestorerPlayer> iterator = playerManager.getAllPlayers().iterator();
 				while (iterator.hasNext()) {
 					RestorerPlayer restorerPlayer = iterator.next();
@@ -130,6 +132,7 @@ public class SaveManager extends Manager {
 			String time = configuration.getString("auto-save.task-cycle", "1 day");
 			int limit = configuration.getInt("auto-save.limit", 5);
 			Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+				PlayerManager playerManager = SourRestorer.getInstance().getManager(PlayerManager.class);
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					RestorerPlayer restorerPlayer = playerManager.getRestorerPlayer(player);
 					if (limit > 0)
@@ -189,7 +192,7 @@ public class SaveManager extends Manager {
 	}
 
 	public boolean addInventorySave(Player player, String reason) {
-		return addInventorySave(player.getUniqueId(), reason, player.getLocation(), new ArmourSave(player), player.getInventory().getContents());
+		return addInventorySave(player.getUniqueId(), reason, player.getLocation(), new ArmourSave(player), player.getInventory().getStorageContents()); // Try getContents if not working
 	}
 
 	public boolean addInventorySave(UUID uuid, String reason, Location location, ArmourSave armour, ItemStack... contents) {

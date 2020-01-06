@@ -46,3 +46,8 @@ commands:
         no-player-found: "&cPlayer by the name &l%input%&c is not a valid player."
         never-played: "&cPlayer &l%input%&c has never played on this server."
         saved: "&aYou have just saved &l%player%&a's inventory."
+    enderchest:
+        description: "Edit a player's enderchest, offline too."
+        syntax: "&c/sr enderchest <player>"
+        no-player-found: "&cPlayer by the name &l%input%&c is not a valid player."
+        never-played: "&cPlayer &l%input%&c has never played on this server."

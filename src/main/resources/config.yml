@@ -31,8 +31,8 @@ auto-save:
     # months, weeks, minutes, ticks etc, all accepted.
     # Multiple accepted too: 5 days and 2 weeks
     task-cycle: "15 hours"
-    # The max amount of auto-saves that can be present at a time for a player.
-    # All older auto-saves will be deleted after 5 to make room for new auto-saves.
+    # The max amount of auto-saves that can be present at one time for a player.
+    # All older auto-saves will be deleted first to make room for new auto-saves.
     # Set to -1 to disable, but be advised that this may build up a big database over time.
     auto-save-limit: 5
 

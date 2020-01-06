@@ -95,7 +95,7 @@ public class ViewInventory implements InventoryProvider {
 				.title(new MessageBuilder(instance, false, "inventories.view-inventory.title")
 						.replace("%player%", optional.get().getPlayer().get().getName())
 						.fromConfiguration(inventories)
-						.setPlaceholderObject(player)
+						.setPlaceholderObject(save)
 						.get())
 				.manager(SourRestorer.getInventoryManager())
 				.provider(this)

@@ -80,7 +80,7 @@ public class LogViewerInventory implements InventoryProvider {
 		contents.set(5, 4, ClickableItem.of(new ItemStackBuilder(instance, "inventories.logs-inventory.back")
 				.setPlaceholderObject(save)
 				.build(), e -> {
-					new SavesInventory(save.getPlayer().get()).open(player);
+					new ViewInventory(save).open(player);
 					new SoundPlayer(instance, "click").playTo(player);
 				}
 		));

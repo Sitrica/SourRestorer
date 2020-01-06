@@ -92,17 +92,29 @@ public class InventorySave {
 		return timestamp;
 	}
 
+	/**
+	 * Restores the player's inventory, keep in mind it doesn't teleport them.
+	 * Will also handle offline saving if player is offline.
+	 * 
+	 * @return boolean if the restore was successful.
+	 */
 	public boolean restoreInventory() {
 		Optional<RestorerPlayer> restorerPlayer = getPlayer();
 		if (!restorerPlayer.isPresent())
 			return false;
 		Optional<Player> player = restorerPlayer.get().getPlayer();
-		if (!player.isPresent()) //TODO do offline inventory restoring.
-			return false;
+		if (!player.isPresent()) { // player is offline.
+			restorerPlayer.get().setOnlineLoad(this);
+			return true;
+		}
 		PlayerInventory playerInventory = player.get().getInventory();
 		playerInventory.clear();
 		playerInventory.setContents(contents);
-		//TODO handle armour
+		playerInventory.setBoots(armour.getBoots());
+		playerInventory.setHelmet(armour.getHelmet());
+		playerInventory.setLeggings(armour.getLeggings());
+		playerInventory.setChestplate(armour.getChestplate());
+		playerInventory.setExtraContents(armour.getExtraContents());
 
 		// Automatic delete
 		FileConfiguration configuration = SourRestorer.getInstance().getConfig();

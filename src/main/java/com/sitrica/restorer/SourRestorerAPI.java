@@ -6,11 +6,13 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.sitrica.restorer.managers.PlayerManager;
 import com.sitrica.restorer.managers.SaveManager;
 import com.sitrica.restorer.objects.ArmourSave;
+import com.sitrica.restorer.objects.InventorySave;
 import com.sitrica.restorer.objects.RestorerPlayer;
 
 public class SourRestorerAPI {
@@ -25,7 +27,7 @@ public class SourRestorerAPI {
 
 	/**
 	 * Returns the RestorerPlayer object allocated to the Player.
-	 * Otherwise will generate it.
+	 * Otherwise will generate it. All info is contained in this object.
 	 * 
 	 * @param player The Bukkit Player to match with.
 	 * @return The RestorerPlayer object allocated to the Player.
@@ -37,6 +39,7 @@ public class SourRestorerAPI {
 	/**
 	 * Returns the RestorerPlayer object allocated to the UUID.
 	 * If there was a data set matching the UUID will be optional.
+	 * All info is contained in this object.
 	 * 
 	 * @param uuid The Bukkit Player UUID to match with.
 	 * @return The RestorerPlayer in an optional if present in database.
@@ -71,7 +74,55 @@ public class SourRestorerAPI {
 	}
 
 	/**
-	 * @return List of reasons sorted alphabetically.
+	 * Creates a local InventorySave object that
+	 * is not linked to the saving system.
+	 * E.g usage: Saving an inventory before entering a minigame.
+	 * 
+	 * @param player The player to have their inventory contents saved.
+	 * @param location The location to make the save based from.
+	 * @return The unallocated InventorySave object for API usage.
+	 */
+	public InventorySave createInventorySave(Player player, Location location) {
+		ArmourSave armour = new ArmourSave(player);
+		ItemStack[] contents = player.getInventory().getStorageContents(); //try getContents if failed test.
+		return new InventorySave(player.getUniqueId(), "API", location, armour, contents);
+	}
+
+	/**
+	 * Creates a local InventorySave object that
+	 * is not linked to the saving system.
+	 * E.g usage: Saving an inventory before entering a minigame.
+	 * 
+	 * @param player The player to have their inventory contents saved.
+	 * @return The unallocated InventorySave object for API usage.
+	 */
+	public InventorySave createInventorySave(Player player) {
+		return new InventorySave(player, "API");
+	}
+
+	/**
+	 * If you want to register a custom reason.
+	 * This is optional, system will catch it regardless if registered.
+	 * 
+	 * @param reason The String reason of potential inventory saves.
+	 */
+	public void addSaveReason(String reason) {
+		saves.addReason(reason);
+	}
+
+	/**
+	 * Because Spigot still to this day doesn't have a proper empty inventory method.
+	 * Useful if wanting to check if an inventory is empty.
+	 * 
+	 * @param inventory The Inventory to check if empty.
+	 * @return boolean if the Inventory is empty.
+	 */
+	public boolean isInventoryEmpty(Inventory inventory) {
+		return saves.isEmpty(inventory);
+	}
+
+	/**
+	 * @return List of registered reasons sorted alphabetically.
 	 */
 	public List<String> getReasons() {
 		return saves.getReasons();

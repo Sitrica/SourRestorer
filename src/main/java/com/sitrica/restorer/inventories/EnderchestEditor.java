@@ -29,7 +29,7 @@ public class EnderchestEditor {
 		Bukkit.getPluginManager().registerEvents(listener, instance);
 
 		FileConfiguration inventories = instance.getConfiguration("inventories").get();
-		enderchest = Bukkit.createInventory(null, 28, new MessageBuilder(instance, "inventories.enderchest-editor.title")
+		enderchest = Bukkit.createInventory(null, 3 * 9, new MessageBuilder(instance, "inventories.enderchest-editor.title")
 				.fromConfiguration(inventories)
 				.setPlaceholderObject(owner)
 				.get());

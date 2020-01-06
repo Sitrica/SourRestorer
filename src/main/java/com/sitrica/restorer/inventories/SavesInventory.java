@@ -131,10 +131,10 @@ public class SavesInventory implements InventoryProvider {
 		pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 1).allowOverride(false));
 		contents.set(0, 5, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.damage-cause")
 				.withAdditionalLoresIf(reason != null, new ListMessageBuilder(instance, false, "inventories.save-inventory.damage-cause.additional-lore")
+						.replace("%reason%", reason == null ? "Not set" : reason)
+						.replace("%cause%", reason == null ? "Not set" : reason)
 						.setPlaceholderObject(restorerPlayer)
 						.fromConfiguration(inventories)
-						.replace("%reason%", reason)
-						.replace("%cause%", reason)
 						.get())
 				.glowingIf(reason != null)
 				.setPlaceholderObject(restorerPlayer)

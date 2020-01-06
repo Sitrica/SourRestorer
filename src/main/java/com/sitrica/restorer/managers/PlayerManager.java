@@ -92,7 +92,8 @@ public class PlayerManager extends Manager {
 			return;
 		}
 		OfflineSave offline = restorerPlayer.getOfflineSave();
-		offline.load(player);
+		if (offline != null)
+			offline.load(player);
 		if (instance.getConfig().getBoolean("delete-system.login", false))
 			restorerPlayer.clearSaves();
 	}
