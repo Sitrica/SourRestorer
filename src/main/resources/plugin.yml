@@ -14,4 +14,6 @@ commands:
 permissions:
   sourrestorer.*:
     description: Gives access to all SourRestorer commands.
+  sourrestorer.grab:
+    description: Allows a staff member to grab items from the saved inventory save.
   

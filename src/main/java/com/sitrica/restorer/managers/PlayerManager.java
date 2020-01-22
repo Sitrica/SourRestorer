@@ -28,6 +28,7 @@ import com.sitrica.restorer.objects.OfflineSave;
 import com.sitrica.restorer.objects.RestorerPlayer;
 import com.sitrica.restorer.serializers.ArmourSaveSerializer;
 import com.sitrica.restorer.serializers.InventorySaveSerializer;
+import com.sitrica.restorer.serializers.OfflineSaveSerializer;
 import com.sitrica.restorer.serializers.RestorerPlayerSerializer;
 
 public class PlayerManager extends Manager {
@@ -41,6 +42,7 @@ public class PlayerManager extends Manager {
 		FileConfiguration configuration = instance.getConfig();
 		Map<Type, Serializer<?>> map = ImmutableMap.of(RestorerPlayer.class, new RestorerPlayerSerializer(),
 				InventorySave.class, new InventorySaveSerializer(),
+				OfflineSave.class, new OfflineSaveSerializer(),
 				ArmourSave.class, new ArmourSaveSerializer());
 		database = getNewDatabase(instance, "player-table", RestorerPlayer.class, map);
 		String interval = configuration.getString("database.autosave", "5 miniutes");

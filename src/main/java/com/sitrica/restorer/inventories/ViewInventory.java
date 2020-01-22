@@ -52,7 +52,10 @@ public class ViewInventory implements InventoryProvider {
 				row++;
 			}
 			column++;
-			contents.set(column, row, ClickableItem.of(itemstack, e -> e.setCancelled(false)));
+			contents.set(column, row, ClickableItem.of(itemstack, e -> {
+				if (!player.hasPermission("sourrestorer.grab"))
+					e.setCancelled(false);
+			}));
 		}
 		contents.set(4, 3, ClickableItem.of(new ItemStackBuilder(instance, "inventories.view-inventory.restore-history")
 				.setPlaceholderObject(save)
