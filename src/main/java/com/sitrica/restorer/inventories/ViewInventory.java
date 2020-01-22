@@ -53,7 +53,7 @@ public class ViewInventory implements InventoryProvider {
 			}
 			column++;
 			contents.set(column, row, ClickableItem.of(itemstack, e -> {
-				if (!player.hasPermission("sourrestorer.grab"))
+				if (player.hasPermission("sourrestorer.grab"))
 					e.setCancelled(false);
 			}));
 		}
