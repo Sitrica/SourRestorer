@@ -38,11 +38,6 @@ repositories {
 		url 'https://jitpack.io'
 	}
 
-	// AnvilGUI
-	maven {
-		url "https://nexus.wesjd.net/repository/thirdparty/"
-	}
-
 	maven {
 		url 'https://maven.pkg.github.com/Sitrica/SourCore/'
 		credentials {
@@ -59,7 +54,7 @@ dependencies {
 	implementation (group: 'org.spigotmc', name: 'spigot-api', version: '1.14.4-R0.1-SNAPSHOT')
 
 	// AnvilGUI
-	shade (group: 'net.wesjd', name: 'anvilgui', version: '1.2.1-SNAPSHOT')
+	shade (group: 'com.github.WesJD', name: 'AnvilGUI', version: 'master-SNAPSHOT')
 
 	// Smart-Invs
 	shade (group: 'fr.minuskube.inv', name: 'smart-invs', version: '1.2.7')

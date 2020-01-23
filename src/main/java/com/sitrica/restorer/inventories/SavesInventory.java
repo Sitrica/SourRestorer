@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.collect.Lists;
 import com.sitrica.core.items.ItemStackBuilder;
@@ -75,7 +76,13 @@ public class SavesInventory implements InventoryProvider {
 					String display = itemstack.getItemMeta().getDisplayName().toLowerCase(Locale.US);
 					if (display.contains(search.toLowerCase(Locale.US)))
 						return false;
-					for (String lore : itemstack.getItemMeta().getLore()) {
+					ItemMeta meta = itemstack.getItemMeta();
+					if (meta == null)
+						continue;
+					List<String> lores = meta.getLore();
+					if (lores == null || lores.isEmpty())
+						continue;
+					for (String lore : meta.getLore()) {
 						if (lore.toLowerCase(Locale.US).contains(search.toLowerCase(Locale.US)))
 							return false;
 					}
@@ -149,14 +156,28 @@ public class SavesInventory implements InventoryProvider {
 					new SoundPlayer(instance, "click").playTo(player);
 				}));
 		contents.set(0, 4, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.search")
+				.withAdditionalLoresIf(search != null, new ListMessageBuilder(instance, false, "inventories.save-inventory.search.additional-lore")
+						.replace("%search%", search == null ? "Not set" : search)
+						.setPlaceholderObject(restorerPlayer)
+						.fromConfiguration(inventories)
+						.get())
 				.replace("%search%", search == null ? "Not set" : search)
 				.setPlaceholderObject(owner)
 				.build(),
 				e -> {
-					new AnvilMenu(new ItemStackBuilder(instance, "inventories.search-anvil.search")
-							.build(), player, result -> restorerPlayer.setSearch(result));
-					open(player);
+					if (e.isRightClick() && search != null) {
+						restorerPlayer.setSearch(null);
+						new SoundPlayer(instance, "search-clear").playTo(player);
+						getInventory(player).open(player);
+						return;
+					}
 					new SoundPlayer(instance, "click").playTo(player);
+					new AnvilMenu(new ItemStackBuilder(instance, "inventories.search-anvil.search")
+							.build(), player, result -> {
+								new SoundPlayer(instance, "click").playTo(player);
+								restorerPlayer.setSearch(result);
+								open(player);
+							});
 				}));
 		contents.set(0, 3, ClickableItem.of(new ItemStackBuilder(instance, "inventories.save-inventory.sort." + sort.name().toLowerCase(Locale.US)).build(),
 				e -> {

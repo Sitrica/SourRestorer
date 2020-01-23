@@ -48,7 +48,7 @@ public class AnvilMenu {
 		inventory = WRAPPER.toBukkitInventory(container);
 		inventory.setItem(0, searchItem);
 
-		containerId = WRAPPER.getNextContainerId(holder);
+		containerId = WRAPPER.getNextContainerId(holder, container);
 		WRAPPER.sendPacketOpenWindow(holder, containerId);
 		WRAPPER.setActiveContainer(holder, container);
 		WRAPPER.setActiveContainerId(container, containerId);

@@ -43,3 +43,13 @@ damage-cause-clear:
             volume: 0.7
             pitch: 5
             delay: 0
+
+# Called when clearing the custom search string sorting.
+search-clear:
+    enabled: true
+    sounds:
+        1:
+            sound: "BLOCK_FIRE_EXTINGUISH"
+            volume: 0.7
+            pitch: 5
+            delay: 0

@@ -128,10 +128,13 @@ inventories:
             title: "&f&lSearch"
             lore:
                 - "&7Click to enter search by item type, name, and lore."
+            material: "PAPER"
+            additional-lore:
                 - ""
                 - "&fCurrently filtering search"
                 - "&ffrom input: &l%search%"
-            material: "PAPER"
+                - ""
+                - "&cRight-click to clear this sorting."
         enderchest:
             title: "&5&lEnderchest"
             lore:
