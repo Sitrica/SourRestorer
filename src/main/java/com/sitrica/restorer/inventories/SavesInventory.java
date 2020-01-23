@@ -58,7 +58,7 @@ public class SavesInventory implements InventoryProvider {
 			return;
 		String reason = restorerPlayer.getSortingReason();
 		if (reason != null)
-			saves.removeIf(save -> save.getReason().equalsIgnoreCase(reason));
+			saves.removeIf(save -> !save.getReason().equalsIgnoreCase(reason));
 		List<InventorySave> stars = saves.stream()
 				.filter(save -> save.isStared())
 				.collect(Collectors.toList());
