@@ -1,6 +1,8 @@
 # SourRestorer
 The best inventory saver and restorer plugin.
 
+Spigot link: https://www.spigotmc.org/resources/sourrestorer-inventory-saver-and-restorer.74550/
+
 SourRestorer is the absolute best inventory saver and restorer for 1.13+ on the market for FREE. Inventory savers help your administration team manage and restore inventories of players easier and faster. From restoring inventories of players that died to a hacker, to managing their physical inventories if they stole an item they aren't suppose to have + enderchest management.
 
 Features:
