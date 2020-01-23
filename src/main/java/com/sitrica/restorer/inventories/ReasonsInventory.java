@@ -42,12 +42,13 @@ public class ReasonsInventory implements InventoryProvider {
 				.setPlaceholderObject(restorerPlayer)
 				.build()));
 		Pagination pagination = contents.pagination();
+		String playerReason = restorerPlayer.getSortingReason();
 		ClickableItem[] items = instance.getManager(SaveManager.class).getReasons().stream()
 				.map(reason -> {
 					ItemStack itemstack = new ItemStackBuilder(instance, "inventories.damage-causes.cause-icon")
+							.glowingIf(playerReason != null && restorerPlayer.getSortingReason().equalsIgnoreCase(reason))
 							.replace("%reason%", reason.toLowerCase(Locale.US))
 							.replace("%cause%", reason.toLowerCase(Locale.US))
-							.glowingIf(restorerPlayer.getSortingReason().equalsIgnoreCase(reason))
 							.setPlaceholderObject(restorerPlayer)
 							.build();
 					return ClickableItem.of(itemstack, event -> {
